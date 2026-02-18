@@ -1,18 +1,20 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, Search, Plus, ChevronDown, X } from 'lucide-react';
-import { useAssignments } from '../context/AssignmentsContext.jsx';
+import { useSelector, useDispatch } from 'react-redux'
+import { completeReview, addComment } from '../store/assignmentsSlice'
 
 const ReviewDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-
-  const [activeSection, setActiveSection] = useState("Information");
-  const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false);
-  const { completeReview, assignments, comments, addComment } = useAssignments();
+  const dispatch = useDispatch()
+  const assignments = useSelector(s => s.assignments.items)
+  const comments = useSelector(s => s.assignments.comments)
 
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("Information");
+  const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [sendModalAction, setSendModalAction] = useState('accept');
   const [resultModalOpen, setResultModalOpen] = useState(false);
@@ -299,7 +301,7 @@ const ReviewDetails = () => {
 
                 <div className="mt-8 flex justify-center">
                   <button onClick={() => {
-                    completeReview(Number(id), true);
+                    dispatch(completeReview({ id: Number(id), accepted: true }))
                     setIsSendModalOpen(false);
                     setCommentText('');
                     setResultType('accepted');
@@ -314,7 +316,7 @@ const ReviewDetails = () => {
                 <div className="mt-6 text-center">
                   <button onClick={() => {
                     if (commentText && commentText.trim()) {
-                      addComment(Number(id), commentText.trim());
+                      dispatch(addComment({ assignmentId: Number(id), text: commentText.trim() }))
                     }
                     setIsSendModalOpen(false);
                     setCommentText('');
@@ -330,7 +332,7 @@ const ReviewDetails = () => {
                 <div className="mt-6 text-center">
                   <button onClick={() => {
                     const accepted = false;
-                    completeReview(Number(id), accepted);
+                    dispatch(completeReview({ id: Number(id), accepted }))
                     setIsSendModalOpen(false);
                     setCommentText('');
                     setResultType('rejected');

@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 import ConfirmationModal from './ConfirmationModal';
 import { Menu, X, Home, Briefcase, MessageSquare, LogOut, Bell } from 'lucide-react';
-import { useAssignments } from '../context/AssignmentsContext.jsx';
+import { useSelector, useDispatch } from 'react-redux'
+import { acceptFromDashboard, declineFromDashboard } from '../store/assignmentsSlice'
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { assignments, stats, acceptFromDashboard, declineFromDashboard, notifications } = useAssignments();
+  const dispatch = useDispatch()
+  const assignments = useSelector(s => s.assignments.items)
+  const notifications = useSelector(s => s.assignments.notifications)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => {
     if (typeof window !== 'undefined') return window.innerWidth >= 1024;
@@ -18,6 +22,14 @@ const Dashboard = () => {
   const notificationCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
 
   // --- Dynamic Stats Logic Mapping ---
+  const stats = useMemo(() => {
+    const accepted = assignments.filter((a) => a.status === 'Completed' && a.reviewResult === 'accepted').length;
+    const completed = assignments.filter((a) => a.status === 'Completed').length;
+    const incomplete = assignments.filter((a) => a.status !== 'Completed').length;
+    const feedback = completed;
+    return { accepted, completed, incomplete, feedback };
+  }, [assignments]);
+
   // This maps your context stats to the UI grid labels
   const statsGrid = useMemo(() => [
     { label: 'Accepted', value: stats.accepted },
@@ -47,7 +59,7 @@ const Dashboard = () => {
   const handleConfirmAction = () => {
     // Only decline is confirmed via modal from dashboard
     if (modalState.type === 'decline') {
-      declineFromDashboard(modalState.id);
+      dispatch(declineFromDashboard(modalState.id))
     }
     setModalState({ ...modalState, isOpen: false });
   };
@@ -145,7 +157,7 @@ const Dashboard = () => {
                     <p className="text-lg font-bold leading-tight text-gray-900">{item.title}</p>
                   </div>
                   <div className="flex space-x-3 w-full md:w-auto">
-                    <button onClick={() => acceptFromDashboard(item.id)} className="flex-1 md:flex-none bg-[#EAB308] text-white px-8 py-2.5 rounded-full font-bold hover:bg-yellow-600 transition-all active:scale-95 shadow-md">Accept</button>
+                    <button onClick={() => dispatch(acceptFromDashboard(item.id))} className="flex-1 md:flex-none bg-[#EAB308] text-white px-8 py-2.5 rounded-full font-bold hover:bg-yellow-600 transition-all active:scale-95 shadow-md">Accept</button>
                     <button onClick={() => openConfirmModal(item.id, 'decline')} className="flex-1 md:flex-none bg-[#990000] text-white px-8 py-2.5 rounded-full font-bold hover:bg-red-800 transition-all active:scale-95 shadow-md">Decline</button>
                   </div>
                 </motion.div>

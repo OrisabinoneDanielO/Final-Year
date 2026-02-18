@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Trash2, Edit, Check, X } from 'lucide-react';
-import { useAssignments } from '../context/AssignmentsContext.jsx';
+import { useSelector, useDispatch } from 'react-redux'
+import { editComment, deleteComment } from '../store/assignmentsSlice';
 
 const CommentsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const assignmentId = Number(id);
-  const { comments, editComment, deleteComment, assignments } = useAssignments();
+  const dispatch = useDispatch()
+  const comments = useSelector(s => s.assignments.comments)
+  const assignments = useSelector(s => s.assignments.items)
   const assignment = assignments.find(a => a.id === assignmentId);
 
   const myComments = comments.filter(c => Number(c.assignmentId) === assignmentId);
@@ -23,7 +26,7 @@ const CommentsPage = () => {
 
   const saveEdit = (idToSave) => {
     if (draftText && draftText.trim()) {
-      editComment(idToSave, draftText.trim());
+      dispatch(editComment({ commentId: idToSave, newText: draftText.trim() }))
     }
     setEditingId(null);
     setDraftText('');
@@ -34,7 +37,7 @@ const CommentsPage = () => {
   };
 
   const handleDeleteAccept = () => {
-    if (pendingDelete) deleteComment(pendingDelete);
+    if (pendingDelete) dispatch(deleteComment(pendingDelete));
     setPendingDelete(null);
   };
 

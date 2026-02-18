@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { useAssignments } from '../context/AssignmentsContext.jsx';
+import { useSelector } from 'react-redux'
 
 const ApplicationView = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { assignments } = useAssignments();
+  const assignments = useSelector(s => s.assignments.items)
   const assignment = assignments.find(a => String(a.id) === String(id));
   const applicationId = assignment?.applicationCode || `BUH-${id}`;
 

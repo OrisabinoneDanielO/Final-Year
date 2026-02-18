@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
 
 const AssignmentsContext = createContext(null);
 
@@ -139,11 +139,6 @@ export const AssignmentsProvider = ({ children }) => {
   return <AssignmentsContext.Provider value={value}>{children}</AssignmentsContext.Provider>;
 };
 
-export const useAssignments = () => {
-  const ctx = useContext(AssignmentsContext);
-  if (!ctx) {
-    throw new Error('useAssignments must be used within AssignmentsProvider');
-  }
-  return ctx;
-};
+// This context is deprecated - use Redux store instead
+// Kept for reference and backward compatibility
 

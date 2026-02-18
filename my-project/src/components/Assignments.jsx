@@ -1,17 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import ConfirmationModal from './ConfirmationModal'; // Import the Modal component
 import { useNavigate, useLocation } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X, Home, Briefcase, MessageSquare, LogOut, SlidersHorizontal, Search } from 'lucide-react';
-import { useAssignments } from '../context/AssignmentsContext.jsx';
 import { useSelector, useDispatch } from 'react-redux'
-import { setAssignments } from '../store/assignmentsSlice'
+import { acceptFromDashboard, declineFromDashboard, beginReview } from '../store/assignmentsSlice'
 
 const Assignments = () => {
   const navigate = useNavigate();
-  const { assignments, beginReview, acceptFromDashboard, declineFromDashboard } = useAssignments();
-  const reduxAssignments = useSelector((s) => s.assignments.items)
   const dispatch = useDispatch()
+  const reduxAssignments = useSelector(s => s.assignments.items)
   
   // --- New Modal State ---
   const [modalState, setModalState] = useState({
@@ -33,11 +32,11 @@ const Assignments = () => {
   const location = useLocation();
 
   // If navigated here with an activeTab in state, set that tab (e.g., Completed)
-  useEffect(() => {
-    if (location && location.state && location.state.activeTab) {
+  React.useEffect(() => {
+    if (location?.state?.activeTab) {
       setActiveFilter(location.state.activeTab);
     }
-  }, [location]);
+  }, [location?.state?.activeTab]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -55,19 +54,12 @@ const Assignments = () => {
   const handleConfirmAction = () => {
     // Only decline is confirmed via modal here; accept is immediate
     if (modalState.type === 'decline') {
-      declineFromDashboard(modalState.id);
+      dispatch(declineFromDashboard(modalState.id))
     }
     setModalState({ ...modalState, isOpen: false });
   };
 
-  // Sync context assignments into Redux store once on mount/update
-  useEffect(() => {
-    if ((!reduxAssignments || reduxAssignments.length === 0) && assignments && assignments.length > 0) {
-      dispatch(setAssignments(assignments))
-    }
-  }, [assignments, reduxAssignments, dispatch])
-
-  const sourceAssignments = (reduxAssignments && reduxAssignments.length) ? reduxAssignments : assignments
+  const sourceAssignments = reduxAssignments
 
   const filtered = useMemo(() => {
     const base = sourceAssignments.filter(
@@ -193,7 +185,7 @@ const Assignments = () => {
                     <>
                       <button
                         className="flex-1 md:flex-none bg-[#EAB308] text-white px-10 py-2.5 rounded-full font-bold active:scale-95 transition-transform"
-                        onClick={() => acceptFromDashboard(item.id)}
+                        onClick={() => dispatch(acceptFromDashboard(item.id))}
                       >
                         Accept
                       </button>
@@ -206,7 +198,7 @@ const Assignments = () => {
                     </>
                   )}
                   {activeFilter === "Not Reviewed" && (
-                    <button onClick={() => { beginReview(item.id); navigate(`/review-details/${item.id}`); }} className="flex-1 md:flex-none bg-[#EAB308] text-white px-10 py-2.5 rounded-full font-bold">
+                    <button onClick={() => { dispatch(beginReview(item.id)); navigate(`/review-details/${item.id}`); }} className="flex-1 md:flex-none bg-[#EAB308] text-white px-10 py-2.5 rounded-full font-bold">
                       Begin Review
                     </button>
                   )}
