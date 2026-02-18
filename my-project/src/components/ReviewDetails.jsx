@@ -140,60 +140,73 @@ const ReviewDetails = () => {
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex flex-col">
       {/* Header Bar */}
-      <header className="bg-white px-4 sm:px-6 py-4 flex items-center justify-between border-b border-gray-200 sticky top-0 z-30">
-        <div className="flex items-center space-x-3 sm:space-x-6 overflow-hidden">
+      <header className="bg-white px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b border-gray-200 sticky top-0 z-30">
+        <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 overflow-hidden min-w-0">
           <button 
             onClick={() => navigate(-1)} 
             aria-label="Go back"
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors shrink-0"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors shrink-0"
           >
-            <ArrowLeft size={24} className="text-black" />
+            <ArrowLeft size={20} className="sm:w-6 sm:h-6 text-black" />
           </button>
-          <div className="overflow-hidden">
-            <h1 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight truncate">
+          <div className="overflow-hidden min-w-0">
+            <h1 className="text-sm sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight truncate">
               {sectionContent[activeSection].title}
             </h1>
-              <div className="flex items-center space-x-2 sm:space-x-4 mt-1 text-[10px] sm:text-sm whitespace-nowrap overflow-x-auto scrollbar-hide">
+              <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4 mt-0.5 sm:mt-1 text-[9px] sm:text-xs lg:text-sm whitespace-nowrap overflow-x-auto scrollbar-hide">
               <span className="text-gray-500">Assigned {assignment?.date || '4/2/2026'}</span>
-              <button onClick={() => navigate(`/application/${id}`)} className="text-blue-600 font-medium underline">Application ID: {assignment?.applicationCode || id}</button>
-              <span className="text-blue-600 font-medium">Version: Latest</span>
+              <button onClick={() => navigate(`/application/${id}`)} className="text-blue-600 font-medium underline hover:no-underline">ID: {assignment?.applicationCode || id}</button>
+              <span className="text-blue-600 font-medium hidden sm:inline">Latest</span>
             </div>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
           {activeSection !== 'Information' && (
             <>
               <button aria-label="Toggle search" onClick={() => setSearchOpen(s => !s)}>
-                <Search className={`cursor-pointer shrink-0 ml-2 text-gray-900`} size={24} />
+                <Search className={`cursor-pointer shrink-0 text-gray-900`} size={20} />
               </button>
               {searchOpen && (
-                <div className="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded-md">
+                <div className="hidden sm:flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded-md">
                   <input
                     ref={searchInputRef}
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); setSearchError(''); }}
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleFindClick(); } }}
                     placeholder="Search in chapter"
-                    className="bg-transparent outline-none text-sm"
+                    className="bg-transparent outline-none text-sm w-32"
                   />
                   <button onClick={() => handleFindClick()} className="text-sm bg-white px-3 py-1 rounded-md font-semibold">Find</button>
                 </div>
               )}
+              {searchOpen && (
+                <div className="sm:hidden fixed top-16 left-3 right-3 bg-gray-100 px-3 py-2 rounded-md z-40 flex items-center gap-2">
+                  <input
+                    ref={searchInputRef}
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setSearchError(''); }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleFindClick(); } }}
+                    placeholder="Search"
+                    className="bg-transparent outline-none text-xs flex-1"
+                  />
+                  <button onClick={() => handleFindClick()} className="text-xs bg-white px-2 py-1 rounded font-semibold whitespace-nowrap">Find</button>
+                </div>
+              )}
             </>
           )}
-          {searchError && <div className="text-red-600 text-xs mt-1">{searchError}</div>}
+          {searchError && <div className="hidden sm:block text-red-600 text-xs">{searchError}</div>}
         </div>
       </header>
 
       {/* Mobile Section Dropdown */}
-      <div className="md:hidden bg-white border-b border-gray-200 px-4 py-2 sticky top-[73px] z-20">
+      <div className="md:hidden bg-white border-b border-gray-200 px-3 sm:px-4 py-2 sticky top-[63px] sm:top-[73px] z-20">
         <button 
           onClick={() => setIsSectionMenuOpen(!isSectionMenuOpen)}
           aria-expanded={isSectionMenuOpen}
-          className="w-full flex justify-between items-center py-2 px-4 bg-gray-100 rounded-lg text-sm font-bold text-gray-700"
+          className="w-full flex justify-between items-center py-2 px-3 sm:px-4 bg-gray-100 rounded-lg text-xs sm:text-sm font-bold text-gray-700"
         >
           {activeSection}
-          <ChevronDown size={20} className={`transition-transform duration-200 ${isSectionMenuOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown size={18} className={`transition-transform duration-200 shrink-0 ${isSectionMenuOpen ? 'rotate-180' : ''}`} />
         </button>
         
         {isSectionMenuOpen && (
@@ -203,12 +216,12 @@ const ReviewDetails = () => {
               className="fixed inset-0 z-40" 
               onClick={() => setIsSectionMenuOpen(false)} 
             />
-            <div className="absolute left-4 right-4 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 p-2 space-y-1 z-50">
+            <div className="absolute left-3 right-3 sm:left-4 sm:right-4 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 p-2 space-y-1 z-50 max-h-64 overflow-y-auto">
               {menuItems.map((item) => (
                 <button
                   key={item}
                   onClick={() => handleSectionChange(item)}
-                  className={`w-full text-left py-3 px-4 rounded-lg text-sm font-semibold transition-all ${
+                  className={`w-full text-left py-2 sm:py-3 px-3 sm:px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                     activeSection === item ? "bg-[#003B95] text-white" : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
@@ -222,12 +235,12 @@ const ReviewDetails = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex w-52 bg-transparent p-6 flex-col space-y-3 shrink-0">
+        <aside className="hidden md:flex w-40 lg:w-52 bg-transparent p-4 lg:p-6 flex-col space-y-2 lg:space-y-3 shrink-0 overflow-y-auto">
           {menuItems.map((item) => (
             <button
               key={item}
               onClick={() => handleSectionChange(item)}
-              className={`w-full py-2 px-4 rounded-full text-sm font-semibold transition-all text-left truncate ${
+              className={`w-full py-2 px-3 lg:px-4 rounded-full text-xs lg:text-sm font-semibold transition-all text-left truncate ${
                 activeSection === item 
                 ? "bg-[#003B95] text-white shadow-md" 
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -240,20 +253,20 @@ const ReviewDetails = () => {
         </aside>
 
         {/* Main Document Viewer */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-10 flex justify-center items-start overflow-y-auto relative">
-          <div className="bg-[#E5E7EB] w-full max-w-4xl min-h-[75vh] rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-12 flex flex-col items-center justify-center text-center shadow-inner relative">
-            <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight">
+        <main className="flex-1 p-2 sm:p-4 lg:p-6 flex flex-col justify-start items-center overflow-y-auto">
+          <div className="bg-[#E5E7EB] w-full max-w-4xl rounded-xl sm:rounded-2xl lg:rounded-[2.5rem] p-4 sm:p-8 lg:p-12 flex flex-col items-center justify-start text-center shadow-inner relative mb-6">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 lg:mb-8 leading-tight">
               {sectionContent[activeSection].title}
             </h2>
             
             {activeSection === "Information" ? (
-              <div className="space-y-1 sm:space-y-2 text-base sm:text-xl font-medium text-gray-800">
+              <div className="space-y-1 sm:space-y-2 text-sm sm:text-lg lg:text-xl font-medium text-gray-800 w-full">
                 {sectionContent["Information"].details.map((line, idx) => (
                   <p key={idx}>{line}</p>
                 ))}
               </div>
             ) : (
-              <div ref={contentRef} className="text-sm sm:text-lg text-gray-700 text-left w-full leading-relaxed">
+              <div ref={contentRef} className="text-xs sm:text-base lg:text-lg text-gray-700 text-left w-full leading-relaxed">
                 {highlightedHtml ? (
                   <div dangerouslySetInnerHTML={{ __html: highlightedHtml }} />
                 ) : (
@@ -262,74 +275,90 @@ const ReviewDetails = () => {
               </div>
             )}
 
-            {/* Floating Action Button - Absolute within the document container */}
+            {/* Floating Action Button - Hidden on mobile, visible on larger screens */}
             <button 
               aria-label="Add comment or feedback"
-              className="absolute -right-4 sm:-right-6 top-1/2 -translate-y-1/2 bg-gray-300 p-3 sm:p-4 rounded-full hover:bg-gray-400 transition-all shadow-lg active:scale-95 z-10"
+              className="hidden sm:flex absolute -right-3 lg:-right-6 top-1/2 -translate-y-1/2 bg-gray-300 p-2.5 sm:p-3 lg:p-4 rounded-full hover:bg-gray-400 transition-all shadow-lg active:scale-95 z-10"
             >
-              <Plus size={24} className="sm:w-8 sm:h-8 text-gray-700" />
+              <Plus size={20} className="lg:w-6 lg:h-6 text-gray-700" />
             </button>
           </div>
-          
-          <button onClick={() => navigate(`/assignments/${id}/comments`)} className="absolute bottom-6 right-10 text-[10px] sm:text-sm font-bold text-gray-600 underline hover:text-blue-700">
-            {commentCount} comments
-          </button>
 
-          {/* Action Buttons (Send Comments / Complete Review) */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6">
-            <button onClick={() => { setSendModalAction('comment'); setIsSendModalOpen(true); }} className="bg-white shadow-md px-8 py-3 rounded-full font-bold">Send Comments</button>
-            <button onClick={() => setIsCompleteModalOpen(true)} className="bg-[#003B95] text-white px-8 py-3 rounded-full font-bold">Complete Review</button>
+          {/* Bottom Action Area - Responsive stacking on mobile */}
+          <div className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4 px-2 sm:px-0">
+            <button 
+              onClick={() => navigate(`/assignments/${id}/comments`)} 
+              className="text-xs sm:text-sm font-bold text-gray-600 underline hover:text-blue-700 order-2 sm:order-1"
+            >
+              {commentCount} comments
+            </button>
+
+            {/* Action Buttons (Send Comments / Complete Review) */}
+            <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-3 sm:gap-4 order-1 sm:order-2">
+              <button 
+                onClick={() => { setSendModalAction('comment'); setIsSendModalOpen(true); }} 
+                className="w-full sm:w-auto bg-white shadow-md px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base hover:shadow-lg transition-shadow"
+              >
+                Send Comments
+              </button>
+              <button 
+                onClick={() => setIsCompleteModalOpen(true)} 
+                className="w-full sm:w-auto bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base hover:bg-blue-900 transition-colors"
+              >
+                Complete Review
+              </button>
+            </div>
           </div>
         </main>
       </div>
 
       {/* Send Comments Modal */}
       {isSendModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setIsSendModalOpen(false)} />
-          <div className="relative bg-white rounded-lg w-full max-w-3xl p-6">
-            <button onClick={() => setIsSendModalOpen(false)} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+          <div className="relative bg-white rounded-t-2xl sm:rounded-lg w-full sm:max-w-2xl lg:max-w-3xl p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
+            <button onClick={() => setIsSendModalOpen(false)} className="absolute right-3 sm:right-4 top-3 sm:top-4 text-gray-400 hover:text-gray-600">
               <X size={20} />
             </button>
             {sendModalAction === 'accept' ? (
               <div>
-                <div className="text-gray-700 text-sm mb-2">You are about to approve:</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">{sectionContent[activeSection].title}</h3>
-                <div className="text-gray-500 text-sm mb-6">Assigned {assignment?.date || '4/2/2026'}</div>
+                <div className="text-gray-700 text-xs sm:text-sm mb-2">You are about to approve:</div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{sectionContent[activeSection].title}</h3>
+                <div className="text-gray-500 text-xs sm:text-sm mb-4 sm:mb-6">Assigned {assignment?.date || '4/2/2026'}</div>
 
-                <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} rows={10} className="w-full bg-gray-100 p-6 rounded-lg resize-none text-gray-700" placeholder="Add Comment (Optional)" />
+                <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} rows={8} className="w-full bg-gray-100 p-3 sm:p-4 rounded-lg resize-none text-sm sm:text-base text-gray-700" placeholder="Add Comment (Optional)" />
 
-                <div className="mt-8 flex justify-center">
+                <div className="mt-6 sm:mt-8 flex justify-center">
                   <button onClick={() => {
                     dispatch(completeReview({ id: Number(id), accepted: true }))
                     setIsSendModalOpen(false);
                     setCommentText('');
                     setResultType('accepted');
                     setResultModalOpen(true);
-                  }} className="bg-[#003B95] text-white px-8 py-3 rounded-full font-semibold">Approve Proposal</button>
+                  }} className="bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-blue-900 transition-colors">Approve Proposal</button>
                 </div>
               </div>
             ) : sendModalAction === 'comment' ? (
               <div>
-                <div className="mb-4 text-gray-700 font-medium">Add Comment</div>
-                <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} rows={8} className="w-full bg-gray-100 p-4 rounded-md resize-none" placeholder="Write your comment here" />
-                <div className="mt-6 text-center">
+                <div className="mb-3 sm:mb-4 text-gray-700 font-medium text-sm sm:text-base">Add Comment</div>
+                <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} rows={6} className="w-full bg-gray-100 p-3 sm:p-4 rounded-md resize-none text-sm sm:text-base" placeholder="Write your comment here" />
+                <div className="mt-4 sm:mt-6 text-center">
                   <button onClick={() => {
                     if (commentText && commentText.trim()) {
                       dispatch(addComment({ assignmentId: Number(id), text: commentText.trim() }))
                     }
                     setIsSendModalOpen(false);
                     setCommentText('');
-                  }} className={`px-6 py-2.5 rounded-full font-semibold bg-[#003B95] text-white`}>
+                  }} className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold bg-[#003B95] text-white text-sm sm:text-base hover:bg-blue-900 transition-colors`}>
                     Send Comment
                   </button>
                 </div>
               </div>
             ) : (
               <div>
-                <div className="mb-4 text-gray-700 font-medium">Add Comment (Optional)</div>
-                <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} rows={10} className="w-full bg-gray-100 p-4 rounded-md resize-none" />
-                <div className="mt-6 text-center">
+                <div className="mb-3 sm:mb-4 text-gray-700 font-medium text-sm sm:text-base">Add Comment (Optional)</div>
+                <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} rows={8} className="w-full bg-gray-100 p-3 sm:p-4 rounded-md resize-none text-sm sm:text-base" />
+                <div className="mt-4 sm:mt-6 text-center">
                   <button onClick={() => {
                     const accepted = false;
                     dispatch(completeReview({ id: Number(id), accepted }))
@@ -337,7 +366,7 @@ const ReviewDetails = () => {
                     setCommentText('');
                     setResultType('rejected');
                     setResultModalOpen(true);
-                  }} className={`px-6 py-2.5 rounded-full font-semibold bg-[#C10000] text-white`}>
+                  }} className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold bg-[#C10000] text-white text-sm sm:text-base hover:bg-red-700 transition-colors`}>
                     Reject Proposal
                   </button>
                 </div>
@@ -349,17 +378,17 @@ const ReviewDetails = () => {
 
       {/* Complete Review Modal */}
       {isCompleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setIsCompleteModalOpen(false)} />
-          <div className="relative bg-white rounded-lg w-full max-w-md p-8 text-center">
-            <button onClick={() => setIsCompleteModalOpen(false)} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+          <div className="relative bg-white rounded-t-2xl sm:rounded-lg w-full sm:max-w-md p-6 sm:p-8">
+            <button onClick={() => setIsCompleteModalOpen(false)} className="absolute right-3 sm:right-4 top-3 sm:top-4 text-gray-400 hover:text-gray-600">
               <X size={20} />
             </button>
-            <h3 className="text-xl font-semibold mb-2">You are about to complete your review.</h3>
-            <p className="text-gray-400 mb-6">Select an option below</p>
-            <div className="flex items-center justify-center gap-6">
-              <button onClick={() => { setSendModalAction('reject'); setIsCompleteModalOpen(false); setIsSendModalOpen(true); }} className="bg-[#C10000] text-white px-6 py-2.5 rounded-full font-semibold">Reject Proposal</button>
-              <button onClick={() => { setSendModalAction('accept'); setIsCompleteModalOpen(false); setIsSendModalOpen(true); }} className="bg-[#003B95] text-white px-6 py-2.5 rounded-full font-semibold">Accept Proposal</button>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">You are about to complete your review.</h3>
+            <p className="text-gray-400 mb-6 text-sm sm:text-base">Select an option below</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <button onClick={() => { setSendModalAction('reject'); setIsCompleteModalOpen(false); setIsSendModalOpen(true); }} className="w-full sm:w-auto bg-[#C10000] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-red-700 transition-colors">Reject Proposal</button>
+              <button onClick={() => { setSendModalAction('accept'); setIsCompleteModalOpen(false); setIsSendModalOpen(true); }} className="w-full sm:w-auto bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-blue-900 transition-colors">Accept Proposal</button>
             </div>
           </div>
         </div>
@@ -367,13 +396,13 @@ const ReviewDetails = () => {
 
       {/* Result Modal (Review accepted / rejected) */}
       {resultModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setResultModalOpen(false)} />
-          <div className="relative bg-white rounded-lg w-full max-w-md p-8 text-center">
-            <h3 className="text-xl font-semibold mb-2">{resultType === 'accepted' ? 'Approval Successful' : 'Rejection Successful'}</h3>
-            <p className="text-gray-500 mb-6">Your decision has been recorded.</p>
+          <div className="relative bg-white rounded-t-2xl sm:rounded-lg w-full sm:max-w-md p-6 sm:p-8">
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">{resultType === 'accepted' ? 'Approval Successful' : 'Rejection Successful'}</h3>
+            <p className="text-gray-500 mb-6 text-sm sm:text-base">Your decision has been recorded.</p>
             <div className="flex items-center justify-center">
-              <button onClick={() => { setResultModalOpen(false); navigate('/assignments', { state: { activeTab: 'Completed' } }); }} className="bg-[#003B95] text-white px-6 py-2.5 rounded-full font-semibold">Done</button>
+              <button onClick={() => { setResultModalOpen(false); navigate('/assignments', { state: { activeTab: 'Completed' } }); }} className="w-full sm:w-auto bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-blue-900 transition-colors">Done</button>
             </div>
           </div>
         </div>
