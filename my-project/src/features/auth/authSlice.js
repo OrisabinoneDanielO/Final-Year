@@ -23,10 +23,16 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem('user');
     },
+    verifyEmail: (state) => {
+      if (state.user) {
+        state.user = { ...state.user, isVerified: true };
+        localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, verifyEmail } = authSlice.actions;
 
 export const selectUser = (state) => state.auth.user;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;

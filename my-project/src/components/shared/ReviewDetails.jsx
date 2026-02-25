@@ -13,6 +13,7 @@ const ReviewDetails = () => {
 
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [declineConfirmOpen, setDeclineConfirmOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("Information");
   const [isSectionMenuOpen, setIsSectionMenuOpen] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -275,9 +276,10 @@ const ReviewDetails = () => {
               </div>
             )}
 
-            {/* Floating Action Button - Hidden on mobile, visible on larger screens */}
+            {/* Floating Action Button — opens add-comment modal */}
             <button 
               aria-label="Add comment or feedback"
+              onClick={() => { setSendModalAction('comment'); setIsSendModalOpen(true); }}
               className="hidden sm:flex absolute -right-3 lg:-right-6 top-1/2 -translate-y-1/2 bg-gray-300 p-2.5 sm:p-3 lg:p-4 rounded-full hover:bg-gray-400 transition-all shadow-lg active:scale-95 z-10"
             >
               <Plus size={20} className="lg:w-6 lg:h-6 text-gray-700" />
@@ -387,8 +389,39 @@ const ReviewDetails = () => {
             <h3 className="text-lg sm:text-xl font-semibold mb-2">You are about to complete your review.</h3>
             <p className="text-gray-400 mb-6 text-sm sm:text-base">Select an option below</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <button onClick={() => { setSendModalAction('reject'); setIsCompleteModalOpen(false); setIsSendModalOpen(true); }} className="w-full sm:w-auto bg-[#C10000] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-red-700 transition-colors">Reject Proposal</button>
+              <button onClick={() => { setIsCompleteModalOpen(false); setDeclineConfirmOpen(true); }} className="w-full sm:w-auto bg-[#C10000] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-red-700 transition-colors">Reject Proposal</button>
               <button onClick={() => { setSendModalAction('accept'); setIsCompleteModalOpen(false); setIsSendModalOpen(true); }} className="w-full sm:w-auto bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-blue-900 transition-colors">Accept Proposal</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Decline Confirmation Modal */}
+      {declineConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setDeclineConfirmOpen(false)} />
+          <div className="relative bg-white rounded-3xl w-full max-w-sm p-8 text-center shadow-2xl">
+            <button onClick={() => setDeclineConfirmOpen(false)} className="absolute right-4 top-4 p-1.5 hover:bg-gray-100 rounded-full">
+              <X size={18} className="text-gray-500" />
+            </button>
+            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <X size={22} className="text-red-600" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-1">Reject this proposal?</h3>
+            <p className="text-sm text-gray-400 mb-6">This decision will be recorded and cannot be undone. You may optionally add a comment explaining your decision.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeclineConfirmOpen(false)}
+                className="flex-1 py-2.5 rounded-full bg-[#E5E7EB] text-gray-700 font-semibold text-sm hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setDeclineConfirmOpen(false); setSendModalAction('reject'); setIsSendModalOpen(true); }}
+                className="flex-1 py-2.5 rounded-full bg-[#C10000] text-white font-semibold text-sm hover:bg-red-700 transition-colors"
+              >
+                Yes, Reject
+              </button>
             </div>
           </div>
         </div>

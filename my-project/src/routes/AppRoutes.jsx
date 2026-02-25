@@ -11,7 +11,13 @@ import Users from '../pages/admin/Users';
 import Reviewers from '../pages/admin/Reviewers';
 import Researchers from '../pages/admin/Researchers';
 import Payments from '../pages/admin/Payments';
+import ReviewerProfile from '../pages/admin/ReviewerProfile';
+import ReviewerAssignments from '../pages/admin/ReviewerAssignments';
+import AdminReviewView from '../pages/admin/AdminReviewView';
+import AdminAssignments from '../pages/admin/AdminAssignments';
+import RoleBasedAssignments from '../pages/RoleBasedAssignments';
 import Submissions from '../pages/researcher/Submissions';
+import ProposalDetail from '../pages/researcher/ProposalDetail';
 
 // Shared components (used as pages)
 import Assignments from '../components/shared/Assignments';
@@ -49,7 +55,7 @@ const AppRoutes = () => {
 
         {/* Reviewer + Admin routes */}
         <Route element={<RoleGuard allowedRoles={['reviewer', 'admin']} />}>
-          <Route path="assignments" element={<Assignments />} />
+          <Route path="assignments" element={<RoleBasedAssignments />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="application/:id" element={<ApplicationView />} />
         </Route>
@@ -58,6 +64,11 @@ const AppRoutes = () => {
         <Route element={<RoleGuard allowedRoles={['admin']} />}>
           <Route path="users" element={<Users />} />
           <Route path="reviewers" element={<Reviewers />} />
+          <Route path="reviewers/:id" element={<ReviewerProfile />} />
+          <Route path="reviewers/:id/assignments" element={<ReviewerAssignments />} />
+          <Route path="reviewers/:reviewerId/assignments/:id/view" element={<AdminReviewView />} />
+          <Route path="assignments" element={<AdminAssignments />} />
+          <Route path="assignments/:id/view" element={<AdminReviewView />} />
           <Route path="researchers" element={<Researchers />} />
           <Route path="payments" element={<Payments />} />
         </Route>
@@ -65,6 +76,7 @@ const AppRoutes = () => {
         {/* Researcher-only routes */}
         <Route element={<RoleGuard allowedRoles={['researcher']} />}>
           <Route path="submissions" element={<Submissions />} />
+          <Route path="submissions/:id" element={<ProposalDetail />} />
         </Route>
       </Route>
     </Routes>

@@ -93,7 +93,7 @@ const ReviewerAssignments = () => {
               </div>
 
               <button
-                onClick={() => navigate(`/dashboard/review-details/${assignment.id}`)}
+                onClick={() => navigate(`/dashboard/reviewers/${id}/assignments/${assignment.id}/view`)}
                 className="bg-[#003B95] text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-blue-900 transition-colors flex-shrink-0"
               >
                 View Details

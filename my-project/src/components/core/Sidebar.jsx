@@ -7,7 +7,6 @@ import {
   Briefcase,
   MessageSquare,
   LogOut,
-  Bell,
   Users,
   FileText,
   CreditCard,
@@ -26,7 +25,7 @@ const ALL_NAV_LINKS = [
 
   // Reviewer sidebar: Assignments, Responses, Notifications
   { label: 'Responses', path: '/dashboard/responses', roles: ['reviewer'], icon: <MessageSquare size={20} /> },
-  { label: 'Notifications', path: '/dashboard/notifications', roles: ['reviewer'], icon: <Bell size={20} /> },
+
 
   // Researcher sidebar: Proposals
   { label: 'Proposals', path: '/dashboard/submissions', roles: ['researcher'], icon: <FileText size={20} /> },

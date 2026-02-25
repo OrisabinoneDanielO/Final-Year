@@ -1,57 +1,245 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectUser } from '../../features/auth/authSlice';
-import { Bell } from 'lucide-react';
+import { selectUser, verifyEmail } from '../../features/auth/authSlice';
+import { Bell, X, CheckCircle } from 'lucide-react';
 
+// ── OTP helpers ───────────────────────────────────────────────────────────────
+/**
+ * In production: replace generateOtp() with a real API call
+ * e.g. POST /api/auth/send-otp  → server generates + emails the OTP.
+ * The component stores the returned OTP in state only for demo purposes.
+ */
+const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
+
+// ── Component ─────────────────────────────────────────────────────────────────
 const ResearcherDashboard = () => {
   const user = useSelector(selectUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // OTP modal state
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [generatedOtp, setGeneratedOtp] = useState('');   // store for demo verification
+  const [enteredOtp, setEnteredOtp] = useState(['', '', '', '', '', '']);
+  const [otpError, setOtpError] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+
+  // ── OTP refs for auto-advance ──────────────────────────────────────────────
+  const inputRefs = Array.from({ length: 6 }, () => React.createRef());
+
+  const handleSendOtp = () => {
+    // TODO (backend): POST /api/auth/send-otp  { email: user.email }
+    const otp = generateOtp();
+    setGeneratedOtp(otp);
+    console.info('[DEV] OTP generated:', otp); // visible in console during dev
+    setOtpSent(true);
+    setOtpModalOpen(true);
+    setEnteredOtp(['', '', '', '', '', '']);
+    setOtpError('');
+  };
+
+  const handleOtpChange = (value, index) => {
+    if (!/^\d?$/.test(value)) return;
+    const updated = [...enteredOtp];
+    updated[index] = value;
+    setEnteredOtp(updated);
+    setOtpError('');
+    if (value && index < 5) inputRefs[index + 1].current?.focus();
+  };
+
+  const handleOtpKeyDown = (e, index) => {
+    if (e.key === 'Backspace' && !enteredOtp[index] && index > 0) {
+      inputRefs[index - 1].current?.focus();
+    }
+  };
+
+  const handleVerifyOtp = () => {
+    const entered = enteredOtp.join('');
+    if (entered.length < 6) { setOtpError('Please enter all 6 digits.'); return; }
+
+    // TODO (backend): POST /api/auth/verify-otp  { email, otp: entered }
+    if (entered === generatedOtp) {
+      dispatch(verifyEmail());
+      setOtpModalOpen(false);
+      setSuccessModal(true);
+    } else {
+      setOtpError('Incorrect OTP. Please try again.');
+    }
+  };
+
+  // ── Derived stats (placeholder — connect to real data later) ───────────────
+  const completedCount = 2;
+  const draftCount = 1;
+  const ongoingStatus = 'Under Review'; // or 'None'
+
+  const firstName = user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Researcher';
 
   return (
     <div className="p-8 bg-white min-h-screen">
-      {/* Verification Alert */}
+
+      {/* ── Verification Alert (unverified only) ─────────────────────────── */}
       {!user?.isVerified && (
-        <div className="bg-[#FEF9C3] p-4 rounded-lg flex justify-between items-center mb-6 border border-[#EAB308]/30">
+        <div className="bg-[#FEF9C3] border border-[#EAB308]/30 rounded-2xl px-5 py-4 flex items-start justify-between mb-6 gap-4">
           <div>
             <p className="text-[#854D0E] font-bold text-sm">Please verify your email</p>
-            <p className="text-[#A16207] text-xs">You must verify your email to submit a proposal to the BUHREC</p>
+            <p className="text-[#A16207] text-xs mt-0.5">
+              You must verify your email to submit a proposal to the BUHREC
+            </p>
           </div>
-          <button className="text-[#854D0E] font-bold text-sm underline">Verify email</button>
+          <button
+            onClick={handleSendOtp}
+            className="shrink-0 text-[#854D0E] font-bold text-sm underline hover:text-[#6B3C0B] transition-colors"
+          >
+            Verify email
+          </button>
         </div>
       )}
 
+      {/* ── Header ──────────────────────────────────────────────────────────── */}
       <header className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Researcher'}</h1>
-          <p className="text-gray-500 text-sm font-medium">Here are your stats!</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome, {firstName}</h1>
+          <p className="text-gray-500 text-sm font-medium mt-0.5">Here are your stats!</p>
         </div>
-        <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><Bell size={20} /></button>
+        <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+          <Bell size={20} />
+        </button>
       </header>
 
-      {/* Researcher Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {['Completed Proposals', 'Draft Proposals', 'Ongoing Proposal Status'].map((label, i) => (
-          <div key={i} className="bg-[#F3F4F6] p-8 rounded-2xl">
-            <p className="text-[10px] font-black text-gray-800 uppercase mb-3 tracking-widest">{label}</p>
-            <p className="text-4xl font-bold">{i === 2 ? 'None' : '0'}</p>
+      {/* ── Stats row ────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+        <div className="bg-[#F3F4F6] rounded-2xl p-6">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Completed Proposals</p>
+          <p className="text-3xl font-bold text-gray-900">{completedCount}</p>
+        </div>
+        <div className="bg-[#F3F4F6] rounded-2xl p-6">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Draft Proposals</p>
+          <p className="text-3xl font-bold text-gray-900">{draftCount}</p>
+        </div>
+        <div className="bg-[#F3F4F6] rounded-2xl p-6">
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ongoing Proposal Status</p>
+          <p className="text-3xl font-bold text-gray-900">{ongoingStatus}</p>
+        </div>
+      </div>
+
+      {/* ── Ongoing Proposal Status section ──────────────────────────────────── */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-gray-900">Ongoing Proposal Status</h2>
+        {user?.isVerified && (
+          <button
+            onClick={() => navigate('/dashboard/submissions')}
+            className="bg-[#003B95] text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-blue-900 transition-colors"
+          >
+            New Submission
+          </button>
+        )}
+      </div>
+
+      {/* Timeline / empty state */}
+      {ongoingStatus === 'None' || !user?.isVerified ? (
+        <div className="text-center py-16">
+          <p className="text-gray-400 font-bold text-lg">You have no ongoing proposals</p>
+        </div>
+      ) : (
+        <div className="space-y-3 max-w-2xl">
+          {[
+            { label: 'Your proposal is under review', date: '13-02-2026', active: true },
+            { label: 'Your proposal has been assigned to a reviewer', date: '13-02-2026', active: false },
+            { label: 'Your proposal has submitted', date: '13-02-2026', active: false },
+          ].map((step, i) => (
+            <div key={i} className="flex items-start gap-4">
+              <span className={`mt-0.5 w-3 h-3 rounded-full shrink-0 ${step.active ? 'bg-[#003B95]' : 'bg-gray-300'}`} />
+              <div className="flex-1 flex justify-between">
+                <p className={`text-sm font-medium ${step.active ? 'text-gray-900' : 'text-gray-400'}`}>
+                  {step.label}
+                </p>
+                <p className={`text-sm ml-4 ${step.active ? 'text-gray-700' : 'text-gray-400'}`}>{step.date}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── OTP Modal ────────────────────────────────────────────────────────── */}
+      {otpModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setOtpModalOpen(false)} />
+          <div className="relative bg-white rounded-3xl w-full max-w-sm p-8 text-center shadow-2xl">
+            <button
+              onClick={() => setOtpModalOpen(false)}
+              className="absolute right-4 top-4 p-1.5 hover:bg-gray-100 rounded-full"
+              aria-label="Close"
+            >
+              <X size={18} className="text-gray-500" />
+            </button>
+
+            <div className="w-12 h-12 rounded-full bg-[#003B95]/10 flex items-center justify-center mx-auto mb-4">
+              <Bell size={22} className="text-[#003B95]" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Verify your email</h3>
+            <p className="text-sm text-gray-400 mb-6">
+              A 6-digit code has been sent to <span className="font-semibold text-gray-700">{user?.email}</span>. Enter it below to verify your account.
+            </p>
+
+            {/* 6-box OTP input */}
+            <div className="flex justify-center gap-2 mb-4">
+              {enteredOtp.map((digit, i) => (
+                <input
+                  key={i}
+                  ref={inputRefs[i]}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(e.target.value, i)}
+                  onKeyDown={(e) => handleOtpKeyDown(e, i)}
+                  className="w-10 h-12 text-center text-lg font-bold bg-[#F3F4F6] rounded-xl outline-none focus:ring-2 focus:ring-[#003B95] transition-all"
+                />
+              ))}
+            </div>
+
+            {otpError && <p className="text-red-500 text-xs mb-3">{otpError}</p>}
+
+            <button
+              onClick={handleVerifyOtp}
+              className="w-full bg-[#003B95] hover:bg-blue-900 text-white py-3 rounded-full font-bold transition-colors"
+            >
+              Verify
+            </button>
+
+            <button
+              onClick={handleSendOtp}
+              className="mt-3 text-sm text-[#003B95] font-semibold hover:underline"
+            >
+              Resend code
+            </button>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
-      <div className="flex justify-between items-center mb-10">
-        <h2 className="text-xl font-bold">Ongoing Proposal Status</h2>
-        <button 
-          onClick={() => navigate('/dashboard/submissions')}
-          className="bg-[#003B95] text-white px-8 py-3 rounded-full font-bold hover:bg-blue-800 transition-all shadow-md"
-        >
-          New Submission
-        </button>
-      </div>
-
-      <div className="text-center py-20">
-        <p className="text-gray-400 font-bold text-lg">You have no ongoing proposals</p>
-      </div>
+      {/* ── Success Modal ─────────────────────────────────────────────────────── */}
+      {successModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setSuccessModal(false)} />
+          <div className="relative bg-white rounded-3xl w-full max-w-sm p-8 text-center shadow-2xl">
+            <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle size={28} className="text-green-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Email verified!</h3>
+            <p className="text-sm text-gray-400 mb-6">
+              Your email has been verified. You can now submit proposals to the BUHREC.
+            </p>
+            <button
+              onClick={() => setSuccessModal(false)}
+              className="w-full bg-[#003B95] hover:bg-blue-900 text-white py-3 rounded-full font-bold transition-colors"
+            >
+              Get started
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
