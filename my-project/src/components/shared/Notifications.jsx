@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux'
-import { markNotificationRead, markAllNotificationsRead } from '../store/assignmentsSlice'
+import { markNotificationRead, markAllNotificationsRead } from '../../features/assignments/assignmentsSlice'
 
 const Notifications = () => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const Notifications = () => {
           {notifications.map((n) => (
             <div key={n.id} className="bg-white p-6 rounded shadow flex justify-between items-start">
               <div>
-                <button onClick={() => { dispatch(markNotificationRead(n.id)); navigate(`/review-details/${n.assignmentId}`); }} className="text-left text-blue-700 font-semibold hover:underline">
+                <button onClick={() => { dispatch(markNotificationRead(n.id)); navigate(`/dashboard/review-details/${n.assignmentId}`); }} className="text-left text-blue-700 font-semibold hover:underline">
                   {n.title}
                 </button>
                 <div className="text-xs text-gray-400 mt-2">{new Date(n.date).toLocaleDateString()}</div>

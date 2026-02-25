@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Trash2, Edit, Check, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux'
-import { editComment, deleteComment } from '../store/assignmentsSlice';
+import { editComment, deleteComment } from '../../features/assignments/assignmentsSlice';
 
 const CommentsPage = () => {
   const { id } = useParams();

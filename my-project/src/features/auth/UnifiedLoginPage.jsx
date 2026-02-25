@@ -1,10 +1,29 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-// eslint-disable-next-line no-unused-vars
-import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from './authSlice';
 
-const Login = () => {
+const ROLE_SETTINGS = {
+  reviewer: {
+    title: 'Reviewer Login',
+    color: '#003B95',
+  },
+  researcher: {
+    title: 'Researcher Login',
+    color: '#003B95',
+  },
+  admin: {
+    title: 'Administrator Login',
+    color: '#003B95',
+  },
+};
+
+const UnifiedLoginPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { role } = useParams();
+  const currentRole = role && ROLE_SETTINGS[role] ? role : 'reviewer';
+
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -25,19 +44,19 @@ const Login = () => {
     setIsLoading(true);
     // Simulate API Auth delay
     setTimeout(() => {
+      const user = { email: formData.email, role: currentRole };
+      dispatch(login(user));
       setIsLoading(false);
       navigate('/dashboard');
     }, 1200);
   };
 
+  const settings = ROLE_SETTINGS[currentRole];
+
   return (
     <div className="min-h-screen bg-[#E5E7EB] flex items-center justify-center p-4">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="bg-white p-6 sm:p-10 rounded-2xl shadow-sm w-full max-w-md"
-      >
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Reviewer Login</h1>
+      <div className="bg-white p-6 sm:p-10 rounded-2xl shadow-sm w-full max-w-md">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">{settings.title}</h1>
         <p className="text-gray-600 mb-8 text-sm">Sign In to your account</p>
 
         {error && (
@@ -73,7 +92,8 @@ const Login = () => {
               id="show-pass"
               checked={showPassword}
               onChange={() => setShowPassword(!showPassword)}
-              className="w-4 h-4 accent-[#003B95]"
+              className="w-4 h-4"
+              style={{ accentColor: settings.color }}
             />
             <label htmlFor="show-pass" className="text-sm text-gray-600 cursor-pointer">Show Password</label>
           </div>
@@ -81,15 +101,16 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-[#003B95] text-white px-12 py-3 rounded-full font-semibold w-full sm:w-1/2 hover:bg-blue-800 transition-all active:scale-95 disabled:opacity-50"
+              className="text-white px-12 py-3 rounded-full font-semibold w-full sm:w-1/2 transition-all active:scale-95 disabled:opacity-50"
+              style={{ backgroundColor: settings.color }}
             >
               {isLoading ? 'Logging in...' : 'Log in'}
             </button>
           </div>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 };
 
-export default Login;
+export default UnifiedLoginPage;

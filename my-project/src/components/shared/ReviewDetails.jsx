@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, Search, Plus, ChevronDown, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux'
-import { completeReview, addComment } from '../store/assignmentsSlice'
+import { completeReview, addComment } from '../../features/assignments/assignmentsSlice'
 
 const ReviewDetails = () => {
   const navigate = useNavigate();
@@ -155,7 +155,7 @@ const ReviewDetails = () => {
             </h1>
               <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4 mt-0.5 sm:mt-1 text-[9px] sm:text-xs lg:text-sm whitespace-nowrap overflow-x-auto scrollbar-hide">
               <span className="text-gray-500">Assigned {assignment?.date || '4/2/2026'}</span>
-              <button onClick={() => navigate(`/application/${id}`)} className="text-blue-600 font-medium underline hover:no-underline">ID: {assignment?.applicationCode || id}</button>
+              <button onClick={() => navigate(`/dashboard/application/${id}`)} className="text-blue-600 font-medium underline hover:no-underline">ID: {assignment?.applicationCode || id}</button>
               <span className="text-blue-600 font-medium hidden sm:inline">Latest</span>
             </div>
           </div>
@@ -287,7 +287,7 @@ const ReviewDetails = () => {
           {/* Bottom Action Area - Responsive stacking on mobile */}
           <div className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4 px-2 sm:px-0">
             <button 
-              onClick={() => navigate(`/assignments/${id}/comments`)} 
+              onClick={() => navigate(`/dashboard/assignments/${id}/comments`)} 
               className="text-xs sm:text-sm font-bold text-gray-600 underline hover:text-blue-700 order-2 sm:order-1"
             >
               {commentCount} comments
@@ -402,7 +402,7 @@ const ReviewDetails = () => {
             <h3 className="text-lg sm:text-xl font-semibold mb-2">{resultType === 'accepted' ? 'Approval Successful' : 'Rejection Successful'}</h3>
             <p className="text-gray-500 mb-6 text-sm sm:text-base">Your decision has been recorded.</p>
             <div className="flex items-center justify-center">
-              <button onClick={() => { setResultModalOpen(false); navigate('/assignments', { state: { activeTab: 'Completed' } }); }} className="w-full sm:w-auto bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-blue-900 transition-colors">Done</button>
+              <button onClick={() => { setResultModalOpen(false); navigate('/dashboard/assignments', { state: { activeTab: 'Completed' } }); }} className="w-full sm:w-auto bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold text-sm sm:text-base hover:bg-blue-900 transition-colors">Done</button>
             </div>
           </div>
         </div>
