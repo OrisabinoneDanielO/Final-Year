@@ -1,65 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { X, MoreVertical } from 'lucide-react';
-
-// Reviewer data with stats
-const DUMMY_REVIEWERS = [
-  {
-    id: 1,
-    name: 'Prof. Imisioluwa Hannah',
-    specialization: 'Public Health & Epidemiology',
-    institution: 'Babcock University',
-    title: 'Professor',
-    yearsInPractice: 15,
-    ongoingAssignments: 10,
-    avatar: null,
-    stats: { accepted: 10, completed: 2, incomplete: 8, pendingFeedback: 3 },
-  },
-  {
-    id: 2,
-    name: 'Prof. Adeyemi Samuel',
-    specialization: 'Clinical Psychology',
-    institution: 'Babcock University',
-    title: 'Professor',
-    yearsInPractice: 12,
-    ongoingAssignments: 8,
-    avatar: null,
-    stats: { accepted: 8, completed: 4, incomplete: 4, pendingFeedback: 2 },
-  },
-  {
-    id: 3,
-    name: 'Dr. Okafor Chinwe',
-    specialization: 'Anatomy & Cell Biology',
-    institution: 'Babcock University',
-    title: 'Doctor',
-    yearsInPractice: 8,
-    ongoingAssignments: 5,
-    avatar: null,
-    stats: { accepted: 5, completed: 3, incomplete: 2, pendingFeedback: 1 },
-  },
-  {
-    id: 4,
-    name: 'Prof. Adetunde Adeyemo',
-    specialization: 'Biomedical Sciences',
-    institution: 'Babcock University',
-    title: 'Professor',
-    yearsInPractice: 20,
-    ongoingAssignments: 12,
-    avatar: null,
-    stats: { accepted: 12, completed: 6, incomplete: 6, pendingFeedback: 4 },
-  },
-  {
-    id: 5,
-    name: 'Dr. Balogun Fatima',
-    specialization: 'Public Health & Epidemiology',
-    institution: 'Babcock University',
-    title: 'Doctor',
-    yearsInPractice: 6,
-    ongoingAssignments: 3,
-    avatar: null,
-    stats: { accepted: 3, completed: 1, incomplete: 2, pendingFeedback: 0 },
-  },
-];
 
 const FILTER_OPTIONS = ['Title', 'Years in Practice', 'Specialization', 'Institution'];
 
@@ -234,11 +176,10 @@ const ReviewerModal = ({ reviewer, onClose }) => {
                   setIsDeactivated(!isDeactivated);
                   setShowDeactivateConfirm(false);
                 }}
-                className={`flex-1 text-white py-3 rounded-full font-bold transition-all ${
-                  isDeactivated
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-[#C10000] hover:bg-red-700'
-                }`}
+                className={`flex-1 text-white py-3 rounded-full font-bold transition-all ${isDeactivated
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-[#C10000] hover:bg-red-700'
+                  }`}
               >
                 {isDeactivated ? 'Reactivate' : 'Deactivate'}
               </button>
@@ -252,26 +193,27 @@ const ReviewerModal = ({ reviewer, onClose }) => {
 
 // ── Main Reviewers Page ──────────────────────────────────────────────────────
 const Reviewers = () => {
+  const navigate = useNavigate();
+  const reviewers = useSelector(state => state.reviewers.items);
   const [activeFilter, setActiveFilter] = useState(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedReviewer, setSelectedReviewer] = useState(null);
 
-  const filteredReviewers = DUMMY_REVIEWERS.filter(
+  const filteredReviewers = reviewers.filter(
     (r) =>
       r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.specialization.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="p-8 bg-white min-h-screen">
-      <header className="mb-8 flex justify-between items-center">
+    <div className="bg-white min-h-screen p-4 sm:p-6 lg:p-8">
+      <header className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Registered Reviewers</h1>
           <p className="text-gray-500 text-sm font-medium">Here are all registered reviewers!</p>
         </div>
         <button
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={() => navigate('/dashboard/reviewers/add')}
           className="bg-[#003B95] text-white px-6 py-2.5 rounded-full font-bold hover:bg-blue-900 transition-colors text-sm"
         >
           Add Reviewer
@@ -284,11 +226,10 @@ const Reviewers = () => {
           <button
             key={option}
             onClick={() => setActiveFilter(activeFilter === option ? null : option)}
-            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-              activeFilter === option
-                ? 'bg-[#003B95] text-white'
-                : 'bg-transparent text-gray-600 hover:bg-gray-100'
-            }`}
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${activeFilter === option
+              ? 'bg-[#003B95] text-white'
+              : 'bg-transparent text-gray-600 hover:bg-gray-100'
+              }`}
           >
             {option}
           </button>
@@ -340,63 +281,6 @@ const Reviewers = () => {
         />
       )}
 
-      {/* Add Reviewer Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setIsAddModalOpen(false)} />
-          <div className="relative bg-white rounded-2xl p-8 w-full max-w-lg shadow-2xl">
-            <button
-              onClick={() => setIsAddModalOpen(false)}
-              className="absolute right-6 top-6 text-gray-400 hover:text-gray-600"
-            >
-              <X size={24} />
-            </button>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Add a Reviewer</h2>
-            <p className="text-gray-400 text-sm mb-6">Fill in the details below to register a new reviewer</p>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">Full Name</label>
-                <input type="text" className="w-full bg-[#F3F4F6] rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Prof. John Smith" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">Title</label>
-                <select className="w-full bg-[#F3F4F6] rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>Prof.</option>
-                  <option>Dr.</option>
-                  <option>Mr.</option>
-                  <option>Mrs.</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">Specialization</label>
-                <input type="text" className="w-full bg-[#F3F4F6] rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Public Health & Epidemiology" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">Institution</label>
-                <input type="text" className="w-full bg-[#F3F4F6] rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Babcock University" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">Years in Practice</label>
-                <input type="number" className="w-full bg-[#F3F4F6] rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 10" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">Email</label>
-                <input type="email" className="w-full bg-[#F3F4F6] rounded-lg p-3 outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. reviewer@university.edu" />
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="bg-[#003B95] text-white px-10 py-3 rounded-full font-bold hover:bg-blue-900 transition-colors"
-              >
-                Add Reviewer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

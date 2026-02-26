@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { selectUser, logout } from '../../features/auth/authSlice';
 import {
   LayoutDashboard,
   Briefcase,
@@ -11,7 +10,9 @@ import {
   FileText,
   CreditCard,
   FlaskConical,
+  Bell,
 } from 'lucide-react';
+import { selectUser, logout } from '../../features/auth/authSlice';
 
 const ALL_NAV_LINKS = [
   // All roles
@@ -27,7 +28,7 @@ const ALL_NAV_LINKS = [
   { label: 'Responses', path: '/dashboard/responses', roles: ['reviewer'], icon: <MessageSquare size={20} /> },
 
 
-  // Researcher sidebar: Proposals
+  // Researcher sidebar: Proposals only
   { label: 'Proposals', path: '/dashboard/submissions', roles: ['researcher'], icon: <FileText size={20} /> },
 ];
 
@@ -41,32 +42,55 @@ const Sidebar = () => {
     navigate(`/login/reviewer`);
   };
 
+  const getDisplayName = (user) => {
+    const namePart = user?.name || user?.email?.split('@')[0];
+    if (!namePart) return 'User';
+    // Split by space, dot, underscore, or hyphen to get the "first name"
+    return namePart.split(/[\s._-]/)[0];
+  };
+
+  const getInitials = (name) => {
+    if (!name) return '??';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const displayName = getDisplayName(user);
+  const initials = getInitials(user?.name || displayName);
+
   const userLinks = ALL_NAV_LINKS.filter(link => link.roles.includes(user?.role));
 
   return (
-    <div className="flex flex-col justify-between h-screen bg-[#003B95] p-6 w-72 text-white">
+    <div className="sticky top-0 flex flex-col justify-between h-screen bg-[#003B95] py-6 w-20 md:w-72 text-white transition-all duration-300 ease-in-out z-40 shrink-0 overflow-y-auto overflow-x-hidden border-r border-[#ffffff10]">
       <div>
-        <div className="mb-12 mt-4 px-4">
-          <h1 className="text-2xl font-bold tracking-tight">BUHREC</h1>
+        <div className="mb-12 mt-4 px-4 flex justify-center md:justify-start">
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight hidden md:block">BUHREC</h1>
+          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center md:hidden">
+            <span className="font-bold text-lg">B</span>
+          </div>
         </div>
-        
-        <nav>
+
+        <nav className="px-3">
           <ul className="space-y-2">
             {userLinks.map((link) => (
               <li key={link.path}>
                 <NavLink
                   to={link.path}
                   end={link.path === '/dashboard'}
+                  title={link.label}
                   className={({ isActive }) =>
-                    `flex items-center space-x-4 py-3 px-6 rounded-lg transition-all duration-200 ${
-                      isActive
-                        ? 'bg-[#001F4D] text-white shadow-inner'
-                        : 'text-blue-100 hover:bg-blue-800'
+                    `flex items-center justify-center md:justify-start md:space-x-4 py-3 px-0 md:px-6 rounded-xl transition-all duration-200 ${isActive
+                      ? 'bg-[#001F4D] text-white shadow-lg'
+                      : 'text-blue-100 hover:bg-white/10'
                     }`
                   }
                 >
-                  {link.icon}
-                  <span className="font-medium">{link.label}</span>
+                  <div className="flex-shrink-0">{link.icon}</div>
+                  <span className="font-medium hidden md:block truncate">{link.label}</span>
                 </NavLink>
               </li>
             ))}
@@ -74,24 +98,29 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 px-3">
         {/* User Profile Snippet */}
-        <div className="flex items-center space-x-3 px-4">
-          <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden border-2 border-white/20">
-            <img src="/avatar-placeholder.png" alt="Profile" className="w-full h-full object-cover" />
+        <div className="flex items-center justify-center md:justify-start md:space-x-3 px-0 md:px-4">
+          <div className="w-10 h-10 rounded-full bg-[#001F4D] flex items-center justify-center border-2 border-white/20 flex-shrink-0 text-xs font-bold">
+            {user?.photo ? (
+              <img src={user.photo} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <span>{initials}</span>
+            )}
           </div>
-          <div className="text-sm">
-            <p className="font-semibold leading-none">{user?.name || user?.email || 'User'}</p>
+          <div className="text-sm hidden md:block min-w-0">
+            <p className="font-semibold leading-none truncate">{displayName}</p>
             <p className="text-blue-200 text-xs capitalize mt-1">{user?.role}</p>
           </div>
         </div>
 
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center space-x-2 w-full bg-[#B91C1C] hover:bg-red-800 text-white py-3 px-4 rounded-lg font-bold transition-all active:scale-95"
+          title="Log out"
+          className="flex items-center justify-center md:space-x-2 w-full bg-[#B91C1C] hover:bg-red-800 text-white py-3 px-0 md:px-4 rounded-xl font-bold transition-all active:scale-95 shadow-md"
         >
-          <LogOut size={20} />
-          <span>Log out</span>
+          <LogOut size={20} className="flex-shrink-0" />
+          <span className="hidden md:block">Log out</span>
         </button>
       </div>
     </div>

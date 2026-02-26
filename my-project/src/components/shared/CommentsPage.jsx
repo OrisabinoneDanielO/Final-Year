@@ -88,10 +88,17 @@ const CommentsPage = () => {
                 <>
                   <p className="text-gray-800 text-sm whitespace-pre-wrap leading-relaxed">{c.text}</p>
                   <div className="flex items-center justify-between mt-3">
-                    <span className="text-xs text-gray-400">
-                      {new Date(c.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                      {c.editedAt && ' · edited'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-400">
+                        {new Date(c.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                        {c.editedAt && ' · edited'}
+                      </span>
+                      {c.section && (
+                        <span className="bg-blue-50 text-[#003B95] text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-blue-100">
+                          {c.section}
+                        </span>
+                      )}
+                    </div>
                     <div className="flex gap-2">
                       <button
                         onClick={() => startEdit(c)}

@@ -60,7 +60,7 @@ const Submissions = () => {
   const showReviewer = activeTab !== 'Drafts';
 
   return (
-    <div className="min-h-full">
+    <div className="min-h-full bg-white -m-4 sm:-m-6 lg:-m-10 p-4 sm:p-6 lg:p-8">
       {/* Title */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Your Proposals</h1>
@@ -75,8 +75,8 @@ const Submissions = () => {
               key={tab.label}
               onClick={() => { setActiveTab(tab.label); setSearchQuery(''); }}
               className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${activeTab === tab.label
-                  ? 'bg-[#003B95] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-[#003B95] text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
               {tab.label}
@@ -106,7 +106,7 @@ const Submissions = () => {
       )}
 
       {/* Cards */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <p className="text-gray-400 font-bold text-lg">You have no proposals</p>
@@ -121,17 +121,20 @@ const Submissions = () => {
           filtered.map((item) => {
             const statusLabel = getStatusLabel(item);
             const btnStyle = getButtonStyle(item);
-            const showBtn = (activeTab === 'Completed' && !!item.reviewResult) || (activeTab === 'Ongoing' && item.hasChanges);
+            const showBtn = activeTab === 'Drafts' || (activeTab === 'Completed' && !!item.reviewResult) || (activeTab === 'Ongoing' && item.hasChanges);
 
             return (
-              <div key={item.id} className="bg-[#F3F4F6] rounded-2xl px-6 py-5 flex items-center justify-between gap-4">
+              <div
+                key={item.id}
+                className="bg-[#E5E7EB] rounded-2xl px-8 py-6 flex items-center justify-between gap-4"
+              >
                 <div className="flex-1 min-w-0">
                   {statusLabel && (
                     <p className={`text-xs font-bold mb-1 ${statusLabel.color}`}>{statusLabel.text}</p>
                   )}
                   <p className="font-bold text-gray-900 leading-snug">{item.title}</p>
                   {showReviewer && (
-                    <div className="flex items-center gap-2 mt-2">
+                    <div className="flex items-center gap-2 mt-3">
                       <div className="w-6 h-6 rounded-full bg-[#003B95]/20 border border-gray-300 flex items-center justify-center text-[#003B95] font-bold text-[9px] shrink-0">
                         {DUMMY_REVIEWER.initials}
                       </div>
@@ -141,10 +144,18 @@ const Submissions = () => {
                 </div>
                 {showBtn && (
                   <button
-                    onClick={() => navigate(`/dashboard/submissions/${item.id}`)}
+                    onClick={() => {
+                      if (activeTab === 'Drafts') {
+                        navigate(`/dashboard/submissions/new?draft=${item.id}`);
+                      } else if (activeTab === 'Ongoing' && item.hasChanges) {
+                        navigate(`/dashboard/submissions/${item.id}/review`);
+                      } else {
+                        navigate(`/dashboard/submissions/${item.id}`);
+                      }
+                    }}
                     className={`shrink-0 px-6 py-2.5 rounded-full font-bold text-sm transition-colors ${btnStyle}`}
                   >
-                    View Details
+                    {activeTab === 'Drafts' ? 'Continue' : 'View Details'}
                   </button>
                 )}
               </div>

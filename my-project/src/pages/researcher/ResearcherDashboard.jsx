@@ -17,6 +17,9 @@ const ResearcherDashboard = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const researcherUnreadCount = useSelector(
+    (s) => (s.assignments.researcherNotifications ?? []).filter((n) => !n.read).length
+  );
 
   // OTP modal state
   const [otpModalOpen, setOtpModalOpen] = useState(false);
@@ -74,10 +77,10 @@ const ResearcherDashboard = () => {
   const draftCount = 1;
   const ongoingStatus = 'Under Review'; // or 'None'
 
-  const firstName = user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Researcher';
+  const displayName = (user?.name || user?.email?.split('@')[0] || 'Researcher').split(/[\s._-]/)[0];
 
   return (
-    <div className="p-8 bg-white min-h-screen">
+    <div className="bg-white min-h-screen p-4 sm:p-6 lg:p-8">
 
       {/* ── Verification Alert (unverified only) ─────────────────────────── */}
       {!user?.isVerified && (
@@ -98,14 +101,24 @@ const ResearcherDashboard = () => {
       )}
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
-      <header className="mb-8 flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome, {firstName}</h1>
+      <header className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="w-full sm:w-auto">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 capitalize">Welcome, {displayName}</h1>
           <p className="text-gray-500 text-sm font-medium mt-0.5">Here are your stats!</p>
         </div>
-        <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
-          <Bell size={20} />
-        </button>
+        <div className="self-start sm:self-auto">
+          <button
+            onClick={() => navigate('/dashboard/notifications')}
+            className="relative p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+          >
+            <Bell size={20} />
+            {researcherUnreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#C10000] text-white text-[9px] font-bold flex items-center justify-center">
+                {researcherUnreadCount}
+              </span>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* ── Stats row ────────────────────────────────────────────────────────── */}
@@ -129,7 +142,7 @@ const ResearcherDashboard = () => {
         <h2 className="text-xl font-bold text-gray-900">Ongoing Proposal Status</h2>
         {user?.isVerified && (
           <button
-            onClick={() => navigate('/dashboard/submissions')}
+            onClick={() => navigate('/dashboard/submissions/new')}
             className="bg-[#003B95] text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-blue-900 transition-colors"
           >
             New Submission

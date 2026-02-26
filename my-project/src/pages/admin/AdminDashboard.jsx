@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { selectUser } from '../../features/auth/authSlice';
 
 const FILTER_DAYS_MAP = {
   'This Week': 7,
@@ -11,6 +12,7 @@ const FILTER_DAYS_MAP = {
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
   const assignments = useSelector((s) => s.assignments.items);
   const [activeFilter, setActiveFilter] = React.useState('This Week');
 
@@ -50,16 +52,18 @@ const AdminDashboard = () => {
     { label: 'New Applications', value: stats.newApps },
   ];
 
+  const displayName = (user?.name || user?.email?.split('@')[0] || 'Admin').split(/[\s._-]/)[0];
+
   return (
     <div className="p-8 bg-white min-h-screen">
       <header className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Welcome, Afolayan</h1>
-          <p className="text-gray-500">Here are your stats!</p>
+          <h1 className="text-3xl font-bold text-gray-900 capitalize">Welcome, {displayName}</h1>
+          <p className="text-gray-500 text-sm font-medium">Here are your stats!</p>
         </div>
         <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
           <span className="sr-only">Notifications</span>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" /></svg>
         </button>
       </header>
 
@@ -79,11 +83,10 @@ const AdminDashboard = () => {
           <button
             key={option}
             onClick={() => setActiveFilter(option)}
-            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-              activeFilter === option 
-              ? 'bg-[#003B95] text-white shadow-md' 
+            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${activeFilter === option
+              ? 'bg-[#003B95] text-white shadow-md'
               : 'bg-[#F3F4F6] text-gray-500 hover:bg-gray-200'
-            }`}
+              }`}
           >
             {option}
           </button>
@@ -102,7 +105,7 @@ const AdminDashboard = () => {
 
       {/* Clickable Action Bar */}
       <h2 className="text-xl font-bold mb-4 text-gray-900 font-sans">Your Unassigned Assignments</h2>
-      <div 
+      <div
         onClick={() => navigate('/dashboard/assignments')}
         className="group bg-[#F3F4F6] p-8 rounded-2xl flex justify-between items-center cursor-pointer hover:shadow-md transition-all active:scale-[0.99]"
       >

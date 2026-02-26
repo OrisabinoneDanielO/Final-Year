@@ -30,10 +30,10 @@ const ReviewerDashboard = () => {
     <div className="p-8 bg-white min-h-screen">
       <header className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'Reviewer'}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 capitalize">Welcome, {(user?.name || user?.email?.split('@')[0] || 'Reviewer').split(/[\s._-]/)[0]}</h1>
           <p className="text-gray-500 text-sm font-medium">Here are your stats!</p>
         </div>
-        <button 
+        <button
           onClick={() => navigate('/dashboard/notifications')}
           className="p-2 bg-gray-100 rounded-full relative hover:bg-gray-200 transition-colors"
         >
@@ -75,13 +75,13 @@ const ReviewerDashboard = () => {
                 <h3 className="text-md font-bold text-gray-900 max-w-xl leading-snug">{task.title}</h3>
               </div>
               <div className="flex space-x-3 w-full md:w-auto">
-                <button 
+                <button
                   onClick={() => dispatch(acceptFromDashboard(task.id))}
                   className="flex-1 md:flex-none bg-[#EAB308] text-white px-8 py-2 rounded-full font-bold hover:bg-yellow-600 transition-colors"
                 >
                   Accept
                 </button>
-                <button 
+                <button
                   onClick={() => dispatch(declineFromDashboard(task.id))}
                   className="flex-1 md:flex-none bg-[#991B1B] text-white px-8 py-2 rounded-full font-bold hover:bg-red-900 transition-colors"
                 >

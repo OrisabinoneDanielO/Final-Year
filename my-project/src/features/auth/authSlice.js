@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { loadUser } from './authStorage';
+
+const storedUser = loadUser();
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem('user')) || null,
-  isAuthenticated: !!localStorage.getItem('user'),
+  user: storedUser,
+  isAuthenticated: !!storedUser,
 };
-
-
-
 
 const authSlice = createSlice({
   name: 'auth',
@@ -15,18 +15,14 @@ const authSlice = createSlice({
     login: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem('user', JSON.stringify(action.payload));  // Correctly store user object
-      console.log("Login action:", action.payload, "New state:", state); // Debugging
     },
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('user');
     },
     verifyEmail: (state) => {
       if (state.user) {
         state.user = { ...state.user, isVerified: true };
-        localStorage.setItem('user', JSON.stringify(state.user));
       }
     },
   },

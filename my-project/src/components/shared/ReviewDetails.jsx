@@ -143,8 +143,8 @@ const ReviewDetails = () => {
       {/* Header Bar */}
       <header className="bg-white px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b border-gray-200 sticky top-0 z-30">
         <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6 overflow-hidden min-w-0">
-          <button 
-            onClick={() => navigate(-1)} 
+          <button
+            onClick={() => navigate(-1)}
             aria-label="Go back"
             className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors shrink-0"
           >
@@ -154,7 +154,7 @@ const ReviewDetails = () => {
             <h1 className="text-sm sm:text-lg lg:text-xl font-bold text-gray-900 leading-tight truncate">
               {sectionContent[activeSection].title}
             </h1>
-              <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4 mt-0.5 sm:mt-1 text-[9px] sm:text-xs lg:text-sm whitespace-nowrap overflow-x-auto scrollbar-hide">
+            <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4 mt-0.5 sm:mt-1 text-[9px] sm:text-xs lg:text-sm whitespace-nowrap overflow-x-auto scrollbar-hide">
               <span className="text-gray-500">Assigned {assignment?.date || '4/2/2026'}</span>
               <button onClick={() => navigate(`/dashboard/application/${id}`)} className="text-blue-600 font-medium underline hover:no-underline">ID: {assignment?.applicationCode || id}</button>
               <span className="text-blue-600 font-medium hidden sm:inline">Latest</span>
@@ -201,7 +201,7 @@ const ReviewDetails = () => {
 
       {/* Mobile Section Dropdown */}
       <div className="md:hidden bg-white border-b border-gray-200 px-3 sm:px-4 py-2 sticky top-[63px] sm:top-[73px] z-20">
-        <button 
+        <button
           onClick={() => setIsSectionMenuOpen(!isSectionMenuOpen)}
           aria-expanded={isSectionMenuOpen}
           className="w-full flex justify-between items-center py-2 px-3 sm:px-4 bg-gray-100 rounded-lg text-xs sm:text-sm font-bold text-gray-700"
@@ -209,22 +209,21 @@ const ReviewDetails = () => {
           {activeSection}
           <ChevronDown size={18} className={`transition-transform duration-200 shrink-0 ${isSectionMenuOpen ? 'rotate-180' : ''}`} />
         </button>
-        
+
         {isSectionMenuOpen && (
           <>
             {/* Click-away overlay */}
-            <div 
-              className="fixed inset-0 z-40" 
-              onClick={() => setIsSectionMenuOpen(false)} 
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setIsSectionMenuOpen(false)}
             />
             <div className="absolute left-3 right-3 sm:left-4 sm:right-4 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 p-2 space-y-1 z-50 max-h-64 overflow-y-auto">
               {menuItems.map((item) => (
                 <button
                   key={item}
                   onClick={() => handleSectionChange(item)}
-                  className={`w-full text-left py-2 sm:py-3 px-3 sm:px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                    activeSection === item ? "bg-[#003B95] text-white" : "hover:bg-gray-50 text-gray-700"
-                  }`}
+                  className={`w-full text-left py-2 sm:py-3 px-3 sm:px-4 rounded-lg text-xs sm:text-sm font-semibold transition-all ${activeSection === item ? "bg-[#003B95] text-white" : "hover:bg-gray-50 text-gray-700"
+                    }`}
                 >
                   {item}
                 </button>
@@ -241,11 +240,10 @@ const ReviewDetails = () => {
             <button
               key={item}
               onClick={() => handleSectionChange(item)}
-              className={`w-full py-2 px-3 lg:px-4 rounded-full text-xs lg:text-sm font-semibold transition-all text-left truncate ${
-                activeSection === item 
-                ? "bg-[#003B95] text-white shadow-md" 
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+              className={`w-full py-2 px-3 lg:px-4 rounded-full text-xs lg:text-sm font-semibold transition-all text-left truncate ${activeSection === item
+                  ? "bg-[#003B95] text-white shadow-md"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
               title={item}
             >
               {item}
@@ -259,7 +257,7 @@ const ReviewDetails = () => {
             <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 lg:mb-8 leading-tight">
               {sectionContent[activeSection].title}
             </h2>
-            
+
             {activeSection === "Information" ? (
               <div className="space-y-1 sm:space-y-2 text-sm sm:text-lg lg:text-xl font-medium text-gray-800 w-full">
                 {sectionContent["Information"].details.map((line, idx) => (
@@ -277,7 +275,7 @@ const ReviewDetails = () => {
             )}
 
             {/* Floating Action Button — opens add-comment modal */}
-            <button 
+            <button
               aria-label="Add comment or feedback"
               onClick={() => { setSendModalAction('comment'); setIsSendModalOpen(true); }}
               className="hidden sm:flex absolute -right-3 lg:-right-6 top-1/2 -translate-y-1/2 bg-gray-300 p-2.5 sm:p-3 lg:p-4 rounded-full hover:bg-gray-400 transition-all shadow-lg active:scale-95 z-10"
@@ -288,8 +286,8 @@ const ReviewDetails = () => {
 
           {/* Bottom Action Area - Responsive stacking on mobile */}
           <div className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4 px-2 sm:px-0">
-            <button 
-              onClick={() => navigate(`/dashboard/assignments/${id}/comments`)} 
+            <button
+              onClick={() => navigate(`/dashboard/assignments/${id}/comments`)}
               className="text-xs sm:text-sm font-bold text-gray-600 underline hover:text-blue-700 order-2 sm:order-1"
             >
               {commentCount} comments
@@ -297,14 +295,14 @@ const ReviewDetails = () => {
 
             {/* Action Buttons (Send Comments / Complete Review) */}
             <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-3 sm:gap-4 order-1 sm:order-2">
-              <button 
-                onClick={() => { setSendModalAction('comment'); setIsSendModalOpen(true); }} 
+              <button
+                onClick={() => { setSendModalAction('comment'); setIsSendModalOpen(true); }}
                 className="w-full sm:w-auto bg-white shadow-md px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base hover:shadow-lg transition-shadow"
               >
                 Send Comments
               </button>
-              <button 
-                onClick={() => setIsCompleteModalOpen(true)} 
+              <button
+                onClick={() => setIsCompleteModalOpen(true)}
                 className="w-full sm:w-auto bg-[#003B95] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base hover:bg-blue-900 transition-colors"
               >
                 Complete Review
@@ -347,7 +345,7 @@ const ReviewDetails = () => {
                 <div className="mt-4 sm:mt-6 text-center">
                   <button onClick={() => {
                     if (commentText && commentText.trim()) {
-                      dispatch(addComment({ assignmentId: Number(id), text: commentText.trim() }))
+                      dispatch(addComment({ assignmentId: Number(id), text: commentText.trim(), section: activeSection }))
                     }
                     setIsSendModalOpen(false);
                     setCommentText('');

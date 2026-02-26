@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Search, X } from 'lucide-react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { unassignReviewer } from '../../features/assignments/assignmentsSlice';
 
-// ── Reviewer display name ────────────────────────────────────────────────────
-const REVIEWER_NAME = 'Prof. Imisioluwa Hannah';
-const REVIEWER_INITIALS = 'IH';
+// Reviewer logic - MOVED TO REDUX
+const getInitials = (name) => name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '??';
 
 // ── Versioned section content ─────────────────────────────────────────────────
 // Version 1 = original submission, Version 2 = after researcher revisions
@@ -116,18 +116,25 @@ const MENU_ITEMS = ['Information', 'Chapter 1', 'Chapter 2', 'Chapter 3', 'Refer
 // ── Component ────────────────────────────────────────────────────────────────
 const AdminReviewView = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { id } = useParams();
   const [activeSection, setActiveSection] = useState('Chapter 1');
   const [searchOpen, setSearchOpen] = useState(false);
-  const [activeVersion, setActiveVersion] = useState(2); // default to latest
+  const [activeVersion, setActiveVersion] = useState(2);
   const [versionsModalOpen, setVersionsModalOpen] = useState(false);
+  const [showUnassignConfirm, setShowUnassignConfirm] = useState(false);
 
   const assignments = useSelector((s) => s.assignments.items);
+  const reviewersList = useSelector((s) => s.reviewers.items);
   const allComments = useSelector((s) => s.assignments.comments);
 
   const assignment = assignments.find((a) => String(a.id) === String(id));
   const reduxComments = allComments.filter((c) => String(c.assignmentId) === String(id));
   const commentCount = reduxComments.length;
+
+  const reviewer = reviewersList.find((r) => r.id === assignment?.reviewerId) ?? null;
+  const REVIEWER_NAME = reviewer?.name ?? 'Reviewer';
+  const REVIEWER_INITIALS = getInitials(reviewer?.name);
 
   // Only show V2 if researcher has made changes
   const availableVersions = assignment?.hasChanges ? VERSIONS : [{ id: 1, label: 'Version 1 (Latest)', isLatest: true }];
@@ -145,9 +152,11 @@ const AdminReviewView = () => {
   const isCompleted = assignment?.status === 'Completed';
 
   // Bottom status text under the document
-  const statusLabel = isCompleted
-    ? reviewResult === 'accepted' ? 'Proposal Accepted' : 'Review not started'
-    : 'Review not started';
+  let statusLabel = 'Review not started';
+  if (isCompleted) {
+    if (reviewResult === 'accepted') statusLabel = 'Proposal Accepted';
+    else if (reviewResult === 'rejected') statusLabel = 'Proposal Rejected';
+  }
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] flex flex-col">
@@ -212,18 +221,17 @@ const AdminReviewView = () => {
               <button
                 key={item}
                 onClick={() => setActiveSection(item)}
-                className={`w-full py-2 px-4 rounded-full text-sm font-semibold text-left transition-all ${
-                  activeSection === item
-                    ? 'bg-[#003B95] text-white'
-                    : 'bg-[#E5E7EB] text-gray-700 hover:bg-gray-300'
-                }`}
+                className={`w-full py-2 px-4 rounded-full text-sm font-semibold text-left transition-all ${activeSection === item
+                  ? 'bg-[#003B95] text-white'
+                  : 'bg-[#E5E7EB] text-gray-700 hover:bg-gray-300'
+                  }`}
               >
                 {item}
               </button>
             ))}
           </div>
 
-          {/* Bottom sidebar: review result or unassign button */}
+          {/* Bottom sidebar: review result, assign, or unassign */}
           <div className="pb-2">
             {isCompleted ? (
               reviewResult === 'accepted' ? (
@@ -231,9 +239,19 @@ const AdminReviewView = () => {
               ) : (
                 <p className="text-[#C10000] font-bold text-sm">Proposal Rejected</p>
               )
-            ) : (
-              <button className="w-full bg-[#C10000] hover:bg-red-800 text-white py-2.5 px-4 rounded-full font-bold text-xs transition-colors">
+            ) : assignment?.reviewerId ? (
+              <button
+                onClick={() => setShowUnassignConfirm(true)}
+                className="w-full bg-[#C10000] hover:bg-red-800 text-white py-2.5 px-4 rounded-full font-bold text-xs transition-colors"
+              >
                 Unassign Assignment
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate(`/dashboard/assignments/${id}/assign`)}
+                className="w-full bg-[#003B95] hover:bg-blue-900 text-white py-2.5 px-4 rounded-full font-bold text-xs transition-colors"
+              >
+                Assign Assignment
               </button>
             )}
           </div>
@@ -320,16 +338,44 @@ const AdminReviewView = () => {
                     setActiveVersion(v.id);
                     setVersionsModalOpen(false);
                   }}
-                  className={`w-full text-left px-2 py-1 rounded-lg transition-colors ${
-                    v.id === activeVersion
-                      ? 'text-[#003B95] font-bold'
-                      : 'text-gray-700 hover:text-[#003B95] font-medium'
-                  }`}
+                  className={`w-full text-left px-2 py-1 rounded-lg transition-colors ${v.id === activeVersion
+                    ? 'text-[#003B95] font-bold'
+                    : 'text-gray-700 hover:text-[#003B95] font-medium'
+                    }`}
                 >
                   {v.label}
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Unassign Confirmation Modal ──────────────────────────────────────── */}
+      {showUnassignConfirm && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowUnassignConfirm(false)} />
+          <div className="relative bg-white rounded-2xl px-10 py-10 w-full max-w-sm shadow-2xl text-center">
+            {/* X close */}
+            <button
+              onClick={() => setShowUnassignConfirm(false)}
+              className="absolute right-4 top-4 p-1.5 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X size={16} className="text-gray-500" />
+            </button>
+            <h2 className="text-lg font-bold text-gray-900 mb-2">You are about to unassign a proposal</h2>
+            <p className="text-gray-400 text-sm mb-7 leading-relaxed">
+              Unassigning a proposal will revert it to an unassigned assignment
+            </p>
+            <button
+              onClick={() => {
+                dispatch(unassignReviewer(assignment?.id));
+                navigate('/dashboard/assignments');
+              }}
+              className="bg-[#C10000] text-white px-10 py-3 rounded-full font-bold text-sm hover:bg-red-700 transition-colors"
+            >
+              Proceed
+            </button>
           </div>
         </div>
       )}
