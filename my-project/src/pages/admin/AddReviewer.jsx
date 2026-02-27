@@ -46,7 +46,11 @@ const AddReviewer = () => {
 
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
-        if (file) setPhoto(URL.createObjectURL(file));
+        if (file) {
+            // Revoke the previous objectURL to prevent memory leaks
+            if (photo) URL.revokeObjectURL(photo);
+            setPhoto(URL.createObjectURL(file));
+        }
     };
 
     const handleCreate = () => {

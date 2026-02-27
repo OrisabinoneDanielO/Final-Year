@@ -202,11 +202,26 @@ const Reviewers = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedReviewer, setSelectedReviewer] = useState(null);
 
-  const filteredReviewers = reviewers.filter(
-    (r) =>
-      r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.specialization.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredReviewers = React.useMemo(() => {
+    let result = reviewers.filter(
+      (r) =>
+        r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.specialization.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Sort by the active filter category
+    if (activeFilter === 'Title') {
+      result = [...result].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    } else if (activeFilter === 'Years in Practice') {
+      result = [...result].sort((a, b) => (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0));
+    } else if (activeFilter === 'Specialization') {
+      result = [...result].sort((a, b) => (a.specialization || '').localeCompare(b.specialization || ''));
+    } else if (activeFilter === 'Institution') {
+      result = [...result].sort((a, b) => (a.institution || '').localeCompare(b.institution || ''));
+    }
+
+    return result;
+  }, [reviewers, searchQuery, activeFilter]);
 
   return (
     <div className="bg-white min-h-screen p-4 sm:p-6 lg:p-8">

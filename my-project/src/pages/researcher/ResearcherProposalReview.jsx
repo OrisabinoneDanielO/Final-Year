@@ -16,8 +16,17 @@ const DUMMY_REVIEWER = {
 const ResearcherProposalReview = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const assignments = useSelector((s) => s.assignments.items);
     const allComments = useSelector((s) => s.assignments.comments);
+    const reviewersList = useSelector((s) => s.reviewers.items);
     const item = assignments.find((a) => String(a.id) === String(id));
+
+    // Resolve the actual reviewer from Redux instead of using a hardcoded dummy
+    const reviewer = reviewersList.find((r) => r.id === item?.reviewerId);
+    const reviewerName = reviewer?.name ?? DUMMY_REVIEWER.name;
+    const reviewerInitials = reviewer
+        ? reviewer.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+        : DUMMY_REVIEWER.initials;
 
     const [activeSection, setActiveSection] = useState('Chapter 1');
 
@@ -108,9 +117,9 @@ const ResearcherProposalReview = () => {
                             <div key={comment.id} className="bg-white rounded-2xl p-5 shadow-sm">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-9 h-9 rounded-full bg-[#003B95]/20 border border-gray-200 flex items-center justify-center text-[#003B95] font-bold text-xs shrink-0">
-                                        {DUMMY_REVIEWER.initials}
+                                        {reviewerInitials}
                                     </div>
-                                    <span className="font-semibold text-gray-900 text-sm">{DUMMY_REVIEWER.name}</span>
+                                    <span className="font-semibold text-gray-900 text-sm">{reviewerName}</span>
                                 </div>
                                 <p className="text-sm text-gray-700 leading-relaxed">{comment.text}</p>
                             </div>

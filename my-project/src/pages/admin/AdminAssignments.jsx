@@ -189,19 +189,11 @@ const AdminAssignments = () => {
 
                   {/* Reviewer info */}
                   {showReviewer && (
-                    <div className="flex items-center gap-2 mt-3 bg-white w-fit pr-3 py-1 rounded-full border border-gray-100 shadow-sm">
+                    <div className="flex items-center gap-2 mt-3 bg-white w-fit pr-4 py-1.5 rounded-full border border-gray-100 shadow-sm">
                       <div className="w-6 h-6 rounded-full bg-[#003B95] flex items-center justify-center text-white font-black text-[9px] shrink-0 transform scale-[1.02]">
                         {getInitials(reviewer.name)}
                       </div>
                       <span className="text-xs text-gray-700 font-bold">{reviewer.name}</span>
-                      {activeTab === 'Assigned' && (
-                        <button
-                          onClick={() => setAssigningItem(item)}
-                          className="ml-1 text-[10px] text-[#003B95] hover:text-blue-900 font-black uppercase tracking-widest underline transition-colors"
-                        >
-                          Change
-                        </button>
-                      )}
                     </div>
                   )}
                 </div>

@@ -33,15 +33,20 @@ const ApplicationView = () => {
 
       <main className="flex-1 p-6 sm:p-12 overflow-y-auto">
         <div className="bg-white rounded-2xl p-8 max-w-4xl mx-auto shadow-md text-center">
-          <h2 className="text-2xl font-bold mb-6">The impact of sleep deprivation on academic performance among university students</h2>
+          <h2 className="text-2xl font-bold mb-6">{assignment?.title || 'Untitled Proposal'}</h2>
 
           <div className="space-y-4 text-gray-800 font-medium mb-8">
-            <p>Ademide Sharon 22/0889</p>
-            <p>Amaka Hadiyat 22/8787</p>
-            <p>Babcock University</p>
-            <p>School of Computing — Computer Science</p>
-            <p>Category: UG</p>
-            <p>Supervisor: Dr Falala David</p>
+            {assignment?.draftData?.researcherNames?.length > 0 ? (
+              assignment.draftData.researcherNames.map((name, i) => (
+                <p key={i}>{name}</p>
+              ))
+            ) : (
+              <p>Researcher name not available</p>
+            )}
+            <p>{assignment?.draftData?.institution || 'Institution not specified'}</p>
+            <p>{assignment?.draftData?.college || 'College not specified'} — {assignment?.draftData?.department || 'Department not specified'}</p>
+            <p>Category: {assignment?.draftData?.category || 'UG'}</p>
+            <p>Supervisor: {assignment?.draftData?.supervisor || 'Not assigned'}</p>
           </div>
 
           <div className="mt-6">

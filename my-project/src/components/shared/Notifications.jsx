@@ -58,7 +58,7 @@ const AdminNotifications = ({ notifications, navigate, dispatch }) => {
             <div key={n.id} className={`bg-white rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm border border-transparent hover:border-blue-100 transition-all ${!n.read ? 'border-l-4 border-l-[#003B95]' : ''}`}>
               <div className="flex-1 min-w-0">
                 <button
-                  onClick={() => navigate(`/dashboard/assignments/${n.assignmentId}/view`)}
+                  onClick={() => { dispatch(markNotificationRead(n.id)); navigate(`/dashboard/assignments/${n.assignmentId}/view`); }}
                   className="text-left text-[#003B95] font-black text-sm leading-snug hover:underline block mb-2"
                 >
                   {n.title}

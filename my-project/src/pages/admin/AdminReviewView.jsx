@@ -16,14 +16,8 @@ const VERSIONS = [
 
 const SECTION_CONTENT_V1 = {
   Information: {
-    title: 'The impact of sleep deprivation on academic performance among university students',
-    details: [
-      'Agu Joshua Minton 22/0188',
-      'Ben Carson School Of Medicine',
-      'Department of Anatomy',
-      'Babcock University',
-      'February 2026',
-    ],
+    title: null, // Will be filled dynamically from assignment.title
+    details: null, // Will be filled dynamically from assignment.draftData
   },
   'Chapter 1': {
     heading: 'INTRODUCTION',
@@ -62,7 +56,7 @@ Data collection spanned three weeks. Ethical approval was obtained from the Babc
 };
 
 const SECTION_CONTENT_V2 = {
-  Information: SECTION_CONTENT_V1.Information,
+  Information: SECTION_CONTENT_V1.Information, // Also dynamic — filled at render time
   'Chapter 1': {
     heading: 'INTRODUCTION',
     subheading: '1.1 Background of the Study',
@@ -120,6 +114,7 @@ const AdminReviewView = () => {
   const { id } = useParams();
   const [activeSection, setActiveSection] = useState('Chapter 1');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeVersion, setActiveVersion] = useState(2);
   const [versionsModalOpen, setVersionsModalOpen] = useState(false);
   const [showUnassignConfirm, setShowUnassignConfirm] = useState(false);
@@ -140,7 +135,23 @@ const AdminReviewView = () => {
   const availableVersions = assignment?.hasChanges ? VERSIONS : [{ id: 1, label: 'Version 1 (Latest)', isLatest: true }];
   const currentVersionLabel = availableVersions.find((v) => v.id === activeVersion)?.label || 'Latest';
   const sectionContent = activeVersion === 1 ? SECTION_CONTENT_V1 : SECTION_CONTENT_V2;
-  const section = sectionContent[activeSection];
+  // Dynamically fill the Information section from assignment data
+  const infoTitle = assignment?.title || 'Untitled Proposal';
+  const infoDetails = assignment?.draftData
+    ? [
+        ...(assignment.draftData.researcherNames || []),
+        assignment.draftData.college || '',
+        assignment.draftData.department ? `Department of ${assignment.draftData.department}` : '',
+        assignment.draftData.institution || '',
+        assignment?.date ? new Date(assignment.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+      ].filter(Boolean)
+    : [
+        'Researcher information not available',
+        assignment?.date ? new Date(assignment.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+      ].filter(Boolean);
+  const section = activeSection === 'Information'
+    ? { ...sectionContent[activeSection], title: infoTitle, details: infoDetails }
+    : sectionContent[activeSection];
 
   const assignedDate = assignment?.date
     ? new Date(assignment.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })
@@ -173,7 +184,7 @@ const AdminReviewView = () => {
 
         <div className="flex-1 px-4 max-w-xl">
           <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-snug">
-            The impact of sleep deprivation on academic performance among university students
+            {assignment?.title || 'Untitled Proposal'}
           </h1>
           <div className="flex items-center gap-3 mt-1 text-xs sm:text-sm flex-wrap">
             <span className="text-gray-500">Assigned {assignedDate}</span>
@@ -202,10 +213,12 @@ const AdminReviewView = () => {
         <div className="bg-white border-y border-gray-200 px-6 py-2 flex items-center gap-3">
           <input
             autoFocus
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search in document…"
             className="flex-1 bg-gray-100 rounded-lg px-4 py-2 text-sm outline-none"
           />
-          <button onClick={() => setSearchOpen(false)} className="text-xs text-gray-500 hover:text-gray-700 font-semibold">
+          <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }} className="text-xs text-gray-500 hover:text-gray-700 font-semibold">
             Cancel
           </button>
         </div>
@@ -274,7 +287,14 @@ const AdminReviewView = () => {
                   <p className="font-bold text-gray-900 text-sm mt-0.5 mb-4">{section.subheading}</p>
                 )}
                 <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line mt-3">
-                  {section.body}
+                  {searchQuery && section.body?.toLowerCase().includes(searchQuery.toLowerCase())
+                    ? section.body.split(new RegExp(`(${searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi')).map((part, i) =>
+                        part.toLowerCase() === searchQuery.toLowerCase()
+                          ? <mark key={i} className="bg-yellow-300">{part}</mark>
+                          : part
+                      )
+                    : section.body
+                  }
                 </div>
               </div>
             )}

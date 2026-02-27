@@ -10,7 +10,6 @@ import {
   FileText,
   CreditCard,
   FlaskConical,
-  Bell,
 } from 'lucide-react';
 import { selectUser, logout } from '../../features/auth/authSlice';
 
@@ -38,8 +37,9 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    const role = user?.role || 'reviewer';
     dispatch(logout());
-    navigate(`/login/reviewer`);
+    navigate(`/login/${role}`);
   };
 
   const getDisplayName = (user) => {

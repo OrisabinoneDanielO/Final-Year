@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectUser } from '../../features/auth/authSlice';
 import { acceptFromDashboard, declineFromDashboard } from '../../features/assignments/assignmentsSlice';
-import { Bell } from 'lucide-react';
+import { Bell, X } from 'lucide-react';
 
 const ReviewerDashboard = () => {
   const user = useSelector(selectUser);
@@ -11,6 +11,7 @@ const ReviewerDashboard = () => {
   const dispatch = useDispatch();
   const allAssignments = useSelector(s => s.assignments.items);
   const notifications = useSelector(s => s.assignments.notifications);
+  const [declineTarget, setDeclineTarget] = React.useState(null);
 
   // Compute stats from Redux
   const stats = React.useMemo(() => {
@@ -84,7 +85,7 @@ const ReviewerDashboard = () => {
                   Accept
                 </button>
                 <button
-                  onClick={() => dispatch(declineFromDashboard(task.id))}
+                  onClick={() => setDeclineTarget(task.id)}
                   className="w-full sm:w-auto bg-[#991B1B] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest hover:bg-red-900 shadow-md transition-all active:scale-95"
                 >
                   Decline
@@ -92,6 +93,37 @@ const ReviewerDashboard = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Decline Confirmation Modal */}
+      {declineTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setDeclineTarget(null)} />
+          <div className="relative bg-white rounded-3xl w-full max-w-sm p-8 text-center shadow-2xl">
+            <button onClick={() => setDeclineTarget(null)} className="absolute right-4 top-4 p-1.5 hover:bg-gray-100 rounded-full">
+              <X size={18} className="text-gray-500" />
+            </button>
+            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <X size={22} className="text-red-600" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-1">Decline this assignment?</h3>
+            <p className="text-sm text-gray-400 mb-6">This action will mark the assignment as rejected and cannot be undone.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeclineTarget(null)}
+                className="flex-1 py-2.5 rounded-full bg-[#E5E7EB] text-gray-700 font-semibold text-sm hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { dispatch(declineFromDashboard(declineTarget)); setDeclineTarget(null); }}
+                className="flex-1 py-2.5 rounded-full bg-[#991B1B] text-white font-semibold text-sm hover:bg-red-900 transition-colors"
+              >
+                Yes, Decline
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

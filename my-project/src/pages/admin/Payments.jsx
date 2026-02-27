@@ -1,30 +1,16 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-
-// ── Dummy payment data ────────────────────────────────────────────────────────
-const ALL_PAYMENTS = [
-  // Successful
-  { id: 1, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Bank Transfer' },
-  { id: 2, date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M', name: 'Funke Adebayo', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Card Payment' },
-  { id: 3, date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R', name: 'Funke Adebayo', level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
-  { id: 4, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Bank Transfer' },
-  { id: 5, date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M', name: 'Funke Adebayo', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Card Payment' },
-  { id: 6, date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R', name: 'Funke Adebayo', level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
-  // Pending
-  { id: 7, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
-  { id: 8, date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M', name: 'Funke Adebayo', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
-  { id: 9, date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R', name: 'Funke Adebayo', level: 'PG', amount: 'N20500', status: 'Pending', method: '' },
-  { id: 10, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
-];
 
 const TABS = ['Successful', 'Pending'];
 
 const Payments = () => {
+  const allPayments = useSelector((s) => s.assignments.payments);
   const [activeTab, setActiveTab] = useState('Successful');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filtered = ALL_PAYMENTS.filter((p) => {
+  const filtered = allPayments.filter((p) => {
     if (p.status !== activeTab) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();

@@ -118,8 +118,24 @@ const NewSubmission = () => {
     const handleDiscard = () => navigate(-1);
 
     const handleProceedToPayment = () => {
+        // Save form data to Redux before navigating so it isn't lost
+        const savedId = draftId ?? Date.now();
+        dispatch(
+            saveDraft({
+                id: savedId,
+                title: projectName.trim() || 'Untitled Draft',
+                researcherNames,
+                institution,
+                college,
+                department,
+                category,
+                supervisor,
+                supervisorEmail,
+                turnItInReport: turnItInReport ? { name: turnItInReport.name, size: turnItInReport.size } : d.turnItInReport,
+            })
+        );
         // TODO (backend): POST /api/submissions with form data
-        navigate('/dashboard/submissions/payment');
+        navigate(`/dashboard/submissions/payment?draft=${savedId}`);
     };
 
     return (

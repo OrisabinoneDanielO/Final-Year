@@ -259,7 +259,24 @@ const LandingPage = () => {
                                                 <span className="text-sm font-bold text-gray-700 group-hover:text-[#003B95]">Step {idx + 1}: {step}</span>
                                                 <ChevronRight size={18} className={`text-gray-400 transition-transform ${openStep === idx ? 'rotate-90 text-[#003B95]' : ''}`} />
                                             </button>
-                                            {openStep === idx && <div className="px-5 pb-5 pt-2 text-sm text-gray-600 font-medium border-t border-white">Details for {step} go here.</div>}
+                                            {openStep === idx && <div className="px-5 pb-5 pt-2 text-sm text-gray-600 font-medium border-t border-white">{
+                                                ({
+                                                    'Application Letter': 'A formal letter addressed to the Chair of BUHREC requesting ethical clearance. Must include the title of research, names and affiliations of all researchers, and the expected duration of the study.',
+                                                    'Title': 'The full title of the research project. Should be clear, concise, and accurately reflect the scope of the study.',
+                                                    'Introduction': 'Provide the background and context of the research, including the problem statement, justification, and relevance of the study.',
+                                                    'Objective': 'State the general and specific objectives of the research clearly and precisely.',
+                                                    'Literature Review': 'Summarize relevant previous studies and identify gaps in knowledge that the proposed research intends to address.',
+                                                    'Methodology': 'Describe the research design, sampling technique, data collection methods, instruments to be used, and data analysis plan.',
+                                                    'Study Population': 'Define the target population, inclusion and exclusion criteria, and the sample size with justification.',
+                                                    'Study Product (where applicable)': 'If applicable, describe the product being studied, including dosage, formulation, administration route, and storage requirements.',
+                                                    'Study Procedure (where applicable)': 'Outline the step-by-step procedure for the study, including the sequence of events and timelines for each phase.',
+                                                    'Assessment of Safety (where applicable)': 'Describe the safety monitoring plan, adverse event reporting procedures, and any stopping rules for the study.',
+                                                    'Clinical Management (where applicable)': 'Describe the clinical management plan, including how participants will be monitored and managed during and after the study.',
+                                                    'Statistics, data handling and record keeping': 'Explain the statistical methods to be used, data management procedures, confidentiality measures, and record-keeping protocols.',
+                                                    'Other requirements': 'Include any additional documents such as informed consent forms, questionnaires, data collection tools, and CVs of researchers.',
+                                                    'Further Information': 'Any additional information relevant to the ethical review, including funding sources, potential conflicts of interest, and institutional approvals.',
+                                                })[step] || `Details for ${step} are being prepared.`
+                                            }</div>}
                                         </div>
                                     ))}
                                 </div>

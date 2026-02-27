@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ArrowLeft, CheckCircle, Upload } from 'lucide-react';
+import { notifyAssignmentChange } from '../../features/assignments/assignmentsSlice';
 
 const AttachProposal = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const assignments = useSelector((s) => s.assignments.items);
     const item = assignments.find((a) => String(a.id) === String(id));
 
@@ -30,6 +32,8 @@ const AttachProposal = () => {
     const handleSubmit = () => {
         if (!selectedFile) return;
         // TODO (backend): POST /api/proposals/:id/resubmit  { file: selectedFile }
+        // Notify Redux that changes have been made — triggers a notification for reviewer
+        dispatch(notifyAssignmentChange(Number(id)));
         setSubmitted(true);
     };
 

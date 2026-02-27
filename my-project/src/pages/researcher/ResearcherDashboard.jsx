@@ -36,7 +36,7 @@ const ResearcherDashboard = () => {
     // TODO (backend): POST /api/auth/send-otp  { email: user.email }
     const otp = generateOtp();
     setGeneratedOtp(otp);
-    console.info('[DEV] OTP generated:', otp); // visible in console during dev
+    // OTP is stored in state for demo verification only
     setOtpSent(true);
     setOtpModalOpen(true);
     setEnteredOtp(['', '', '', '', '', '']);
@@ -72,10 +72,12 @@ const ResearcherDashboard = () => {
     }
   };
 
-  // ── Derived stats (placeholder — connect to real data later) ───────────────
-  const completedCount = 2;
-  const draftCount = 1;
-  const ongoingStatus = 'Under Review'; // or 'None'
+  // ── Derived stats from Redux ───────────────────────────────────────────────
+  const allAssignments = useSelector((s) => s.assignments.items);
+  const completedCount = allAssignments.filter((a) => a.status === 'Completed').length;
+  const draftCount = allAssignments.filter((a) => a.status === 'Unaccepted').length;
+  const ongoingAssignments = allAssignments.filter((a) => a.status === 'Ongoing' || a.status === 'Not Reviewed');
+  const ongoingStatus = ongoingAssignments.length > 0 ? 'Under Review' : 'None';
 
   const displayName = (user?.name || user?.email?.split('@')[0] || 'Researcher').split(/[\s._-]/)[0];
 
@@ -157,11 +159,17 @@ const ResearcherDashboard = () => {
         </div>
       ) : (
         <div className="space-y-3 max-w-2xl">
-          {[
-            { label: 'Your proposal is under review', date: '13-02-2026', active: true },
-            { label: 'Your proposal has been assigned to a reviewer', date: '13-02-2026', active: false },
-            { label: 'Your proposal has submitted', date: '13-02-2026', active: false },
-          ].map((step, i) => (
+          {(() => {
+            const latest = ongoingAssignments[0];
+            const dateStr = latest?.date
+              ? new Date(latest.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
+              : '—';
+            const steps = [
+              { label: 'Your proposal is under review', date: dateStr, active: true },
+              { label: 'Your proposal has been assigned to a reviewer', date: dateStr, active: false },
+              { label: 'Your proposal has been submitted', date: dateStr, active: false },
+            ];
+            return steps.map((step, i) => (
             <div key={i} className="flex items-start gap-4">
               <span className={`mt-0.5 w-3 h-3 rounded-full shrink-0 ${step.active ? 'bg-[#003B95]' : 'bg-gray-300'}`} />
               <div className="flex-1 flex justify-between">
@@ -171,7 +179,8 @@ const ResearcherDashboard = () => {
                 <p className={`text-sm ml-4 ${step.active ? 'text-gray-700' : 'text-gray-400'}`}>{step.date}</p>
               </div>
             </div>
-          ))}
+          ));
+          })()}
         </div>
       )}
 

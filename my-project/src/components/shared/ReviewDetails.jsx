@@ -10,6 +10,7 @@ const ReviewDetails = () => {
   const dispatch = useDispatch()
   const assignments = useSelector(s => s.assignments.items)
   const comments = useSelector(s => s.assignments.comments)
+  const user = useSelector(s => s.auth.user)
 
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
@@ -44,14 +45,19 @@ const ReviewDetails = () => {
 
   const sectionContent = {
     "Information": {
-      title: "The impact of sleep deprivation on academic performance among university students",
-      details: [
-        "Agu Joshua Minton 22/0188",
-        "Ben Carson School Of Medicine",
-        "Department of Anatomy",
-        "Babcock University",
-        "February 2026"
-      ]
+      title: assignment?.title || "Untitled Proposal",
+      details: assignment?.draftData
+        ? [
+            ...(assignment.draftData.researcherNames || []),
+            assignment.draftData.college || '',
+            assignment.draftData.department ? `Department of ${assignment.draftData.department}` : '',
+            assignment.draftData.institution || '',
+            assignment.date ? new Date(assignment.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+          ].filter(Boolean)
+        : [
+            "Researcher information not available",
+            assignment?.date ? new Date(assignment.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+          ].filter(Boolean)
     },
     "Chapter 1": {
       title: "Chapter 1: Introduction",
@@ -345,7 +351,7 @@ const ReviewDetails = () => {
                 <div className="mt-4 sm:mt-6 text-center">
                   <button onClick={() => {
                     if (commentText && commentText.trim()) {
-                      dispatch(addComment({ assignmentId: Number(id), text: commentText.trim(), section: activeSection }))
+                      dispatch(addComment({ assignmentId: Number(id), text: commentText.trim(), section: activeSection, authorEmail: user?.email }))
                     }
                     setIsSendModalOpen(false);
                     setCommentText('');

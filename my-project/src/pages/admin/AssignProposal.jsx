@@ -14,8 +14,7 @@ const CATEGORIES = [
 
 const PROPOSAL_LEVELS = ['UG', 'PG', 'PhD', 'Masters'];
 
-// Reviewer data - MOVED TO REDUX
-const REVIEWERS_LIST = [];
+// Reviewer data comes from Redux store
 
 // ── Confirmation Modal ─────────────────────────────────────────────────────────
 const ConfirmModal = ({ onClose, onConfirm }) => (
@@ -67,7 +66,7 @@ const AssignProposal = () => {
     const assignment = assignments.find(a => String(a.id) === String(id));
 
     const [category, setCategory] = useState(CATEGORIES[0]);
-    const [level] = useState('UG');
+    const [level, setLevel] = useState(assignment?.draftData?.category || 'UG');
     const [selectedReviewerId, setSelectedReviewerId] = useState(null);
     const [showConfirm, setShowConfirm] = useState(false);
     const [done, setDone] = useState(false);

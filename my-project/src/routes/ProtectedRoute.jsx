@@ -7,10 +7,8 @@ import { selectIsAuthenticated } from '../features/auth/authSlice';
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  console.log("ProtectedRoute - isAuthenticated:", isAuthenticated);
-
   if (!isAuthenticated) {
-    return <Navigate to="/login/reviewer" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children ? children : <Outlet />;

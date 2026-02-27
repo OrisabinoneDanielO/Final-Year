@@ -12,6 +12,7 @@ const CommentsPage = () => {
   const comments = useSelector((s) => s.assignments.comments);
   const assignments = useSelector((s) => s.assignments.items);
   const assignment = assignments.find((a) => a.id === assignmentId);
+  const currentUser = useSelector((s) => s.auth.user);
 
   const myComments = comments.filter((c) => Number(c.assignmentId) === assignmentId);
 
@@ -99,6 +100,8 @@ const CommentsPage = () => {
                         </span>
                       )}
                     </div>
+                    {/* Only show edit/delete if current user owns the comment or is admin */}
+                    {(currentUser?.role === 'admin' || !c.authorEmail || c.authorEmail === currentUser?.email) && (
                     <div className="flex gap-2">
                       <button
                         onClick={() => startEdit(c)}
@@ -113,6 +116,7 @@ const CommentsPage = () => {
                         <Trash2 size={12} /> Delete
                       </button>
                     </div>
+                    )}
                   </div>
                 </>
               )}

@@ -34,8 +34,11 @@ const AdminDashboard = () => {
     const assigned = filteredAssignments.filter((a) => a.status === 'Not Reviewed').length;
     const completed = filteredAssignments.filter((a) => a.status === 'Completed').length;
     const incomplete = filteredAssignments.filter((a) => a.status === 'Ongoing').length;
-    const ugSubmissions = Math.ceil(filteredAssignments.length * 0.6);
-    const pgSubmissions = filteredAssignments.length - ugSubmissions;
+    const ugSubmissions = filteredAssignments.filter((a) => (a.draftData?.category || a.category || 'UG') === 'UG').length;
+    const pgSubmissions = filteredAssignments.filter((a) => {
+      const cat = a.draftData?.category || a.category || 'UG';
+      return cat !== 'UG';
+    }).length;
     const newApps = filteredAssignments.length;
 
     return { unassigned, assigned, completed, incomplete, ugSubmissions, pgSubmissions, newApps };
@@ -110,7 +113,7 @@ const AdminDashboard = () => {
         className="group bg-[#F3F4F6] p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:shadow-md transition-all active:scale-[0.99]"
       >
         <p className="text-base sm:text-lg font-semibold text-gray-900">
-          You have <span className="text-[#003B95]">{stats.unassigned * 2.5}</span> Unassigned Assignments
+          You have <span className="text-[#003B95]">{stats.unassigned}</span> Unassigned Assignments
         </p>
         <div className="p-3 bg-gray-200 rounded-full group-hover:bg-[#003B95] group-hover:text-white transition-colors self-end sm:self-auto">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>

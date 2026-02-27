@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { MoreHorizontal, ChevronRight, X } from 'lucide-react';
-
-const DUMMY_RESEARCHERS = [
-  { id: 1, name: 'Anaise Chem', title: 'Miss', level: 'PG', department: 'Anatomy', school: 'School of Basic Sciences', institution: 'Babcock University', submissions: 2, completed: 2, ongoingStatus: 'Not Started', avatar: 'https://i.pravatar.cc/150?u=1' },
-  { id: 2, name: 'Ademide Sharon', title: 'Mrs', level: 'PhD', department: 'Computer Science', school: 'School of Computing', institution: 'Babcock University', submissions: 1, completed: 1, ongoingStatus: 'Under Review', avatar: 'https://i.pravatar.cc/150?u=2' },
-  { id: 3, name: 'Amaka Hadiyat', title: 'Miss', level: 'Masters', department: 'Computer Science', school: 'School of Computing', institution: 'Babcock University', submissions: 3, completed: 2, ongoingStatus: 'Revisions Requested', avatar: 'https://i.pravatar.cc/150?u=3' },
-  { id: 4, name: 'Balogun Fatima Ola', title: 'Dr', level: 'PhD', department: 'Public Health', school: 'School of Public Health', institution: 'Babcock University', submissions: 0, completed: 0, ongoingStatus: 'Not Started', avatar: 'https://i.pravatar.cc/150?u=4' },
-  { id: 5, name: 'Okafor Chinwe David', title: 'Mr', level: 'UG', department: 'Biochemistry', school: 'School of Basic Sciences', institution: 'Babcock University', submissions: 1, completed: 0, ongoingStatus: 'Not Started', avatar: 'https://i.pravatar.cc/150?u=5' },
-];
 
 const ResearcherModal = ({ researcher, onClose }) => {
   const navigate = useNavigate();
@@ -92,6 +85,23 @@ const ResearcherModal = ({ researcher, onClose }) => {
 
 const Researchers = () => {
   const [selectedResearcher, setSelectedResearcher] = useState(null);
+  const researchersList = useSelector((s) => s.assignments.researchers);
+  const allAssignments = useSelector((s) => s.assignments.items);
+
+  // Enrich researchers with live stats from assignments
+  const researchers = researchersList.map((r) => {
+    const myAssignments = allAssignments.filter(
+      (a) => a.researcherId === r.id || a.draftData?.researcherNames?.toLowerCase().includes(r.name.split(' ')[0].toLowerCase())
+    );
+    const completed = myAssignments.filter((a) => a.status === 'Completed').length;
+    const ongoing = myAssignments.find((a) => a.status === 'Ongoing' || a.status === 'Not Reviewed');
+    return {
+      ...r,
+      submissions: myAssignments.length || r.submissions || 0,
+      completed: completed || r.completed || 0,
+      ongoingStatus: ongoing?.status || r.ongoingStatus || 'Not Started',
+    };
+  });
 
   return (
     <div className="p-4 sm:p-8 bg-white min-h-screen">
@@ -102,7 +112,7 @@ const Researchers = () => {
 
       {/* Researchers List */}
       <div className="space-y-3">
-        {DUMMY_RESEARCHERS.map((researcher) => (
+        {researchers.map((researcher) => (
           <button
             key={researcher.id}
             onClick={() => setSelectedResearcher(researcher)}

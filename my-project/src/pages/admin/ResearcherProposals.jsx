@@ -27,9 +27,11 @@ const ResearcherProposals = () => {
     const allAssignments = useSelector(s => s.assignments.items);
     const reviewers = useSelector(s => s.reviewers.items);
 
-    // Filter assignments based on the active tab status
-    // For demo purposes, we just map the tabs roughly to the possible statuses
+    // Filter assignments based on the active tab status AND researcher ID
     const proposals = allAssignments.filter(a => {
+        // Filter by researcher if the assignment has a researcherId
+        if (a.researcherId && a.researcherId !== Number(id)) return false;
+
         if (activeTab === 'Unaccepted') return a.status === 'Unaccepted';
         if (activeTab === 'Not Reviewed') return a.status === 'Not Reviewed';
         if (activeTab === 'Ongoing') return a.status === 'Ongoing';

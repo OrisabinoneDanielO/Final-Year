@@ -11,11 +11,6 @@ const TABS = [
   { label: 'Completed', statuses: ['Completed'] },
 ];
 
-const DUMMY_REVIEWER = {
-  name: 'Prof. Imisioluwa Hannah',
-  initials: 'IH',
-};
-
 // Status label config per item
 const getStatusLabel = (item) => {
   if (item.status === 'Completed') {
@@ -42,6 +37,7 @@ const getButtonStyle = (item) => {
 const Submissions = () => {
   const navigate = useNavigate();
   const allItems = useSelector((s) => s.assignments.items);
+  const reviewersList = useSelector((s) => s.reviewers.items);
 
   const [activeTab, setActiveTab] = useState('Drafts');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -121,7 +117,7 @@ const Submissions = () => {
           filtered.map((item) => {
             const statusLabel = getStatusLabel(item);
             const btnStyle = getButtonStyle(item);
-            const showBtn = activeTab === 'Drafts' || (activeTab === 'Completed' && !!item.reviewResult) || (activeTab === 'Ongoing' && item.hasChanges);
+            const showBtn = activeTab === 'Drafts' || (activeTab === 'Completed' && !!item.reviewResult) || (activeTab === 'Ongoing') || (activeTab === 'Not Reviewed');
 
             return (
               <div
@@ -133,14 +129,21 @@ const Submissions = () => {
                     <p className={`text-xs font-bold mb-1 ${statusLabel.color}`}>{statusLabel.text}</p>
                   )}
                   <p className="font-bold text-gray-900 leading-snug">{item.title}</p>
-                  {showReviewer && (
+                  {showReviewer && (() => {
+                    const reviewer = reviewersList.find((r) => r.id === item.reviewerId);
+                    const rName = reviewer?.name ?? 'Not assigned';
+                    const rInitials = reviewer
+                      ? reviewer.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+                      : '??';
+                    return (
                     <div className="flex items-center gap-2 mt-3">
                       <div className="w-6 h-6 rounded-full bg-[#003B95]/20 border border-gray-300 flex items-center justify-center text-[#003B95] font-bold text-[9px] shrink-0">
-                        {DUMMY_REVIEWER.initials}
+                        {rInitials}
                       </div>
-                      <span className="text-sm text-gray-600 font-medium">{DUMMY_REVIEWER.name}</span>
+                      <span className="text-sm text-gray-600 font-medium">{rName}</span>
                     </div>
-                  )}
+                    );
+                  })()}
                 </div>
                 {showBtn && (
                   <button
@@ -150,7 +153,7 @@ const Submissions = () => {
                       } else if (activeTab === 'Ongoing' && item.hasChanges) {
                         navigate(`/dashboard/submissions/${item.id}/review`);
                       } else {
-                        navigate(`/dashboard/submissions/${item.id}`);
+                        navigate(`/dashboard/submissions/${item.id}/review`);
                       }
                     }}
                     className={`shrink-0 px-6 py-2.5 rounded-full font-bold text-sm transition-colors ${btnStyle}`}

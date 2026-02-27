@@ -8,8 +8,6 @@ import AdminDashboard from './admin/AdminDashboard';
 const RoleBasedDashboard = () => {
   const user = useSelector(selectUser);
 
-  console.log("RoleBasedDashboard - user:", user);
-
   switch (user?.role) {
     case 'reviewer':
       return <ReviewerDashboard />;

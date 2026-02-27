@@ -54,8 +54,8 @@ const initialState = {
     },
   ],
   comments: [
-    { id: 1, assignmentId: 3, text: 'Please clarify sampling section', section: 'Chapter 3', date: '2026-01-18' },
-    { id: 2, assignmentId: 3, text: 'Add ethics approval details', section: 'Chapter 3', date: '2026-01-19' },
+    { id: 1, assignmentId: 3, text: 'Please clarify sampling section', section: 'Chapter 3', date: '2026-01-18', authorEmail: 'i.hannah@babcock.edu.ng' },
+    { id: 2, assignmentId: 3, text: 'Add ethics approval details', section: 'Chapter 3', date: '2026-01-19', authorEmail: 'i.hannah@babcock.edu.ng' },
   ],
   researcherNotifications: [
     { id: 'rn-1', type: 'comment', title: 'New comment on your proposal', body: 'Prof. Imisioluwa Hannah left a comment on "Physical exercise and stress management"', date: '2026-02-25', read: false, assignmentId: 3 },
@@ -63,6 +63,25 @@ const initialState = {
     { id: 'rn-3', type: 'approved', title: 'Proposal approved', body: 'Your proposal "Sleep patterns in professional athletes" has been approved by the reviewer', date: '2026-02-20', read: true, assignmentId: 4 },
     { id: 'rn-4', type: 'rejected', title: 'Proposal rejected', body: 'Your proposal "Effects of mindfulness meditation" was not approved. Check the reviewer\u2019s comment for details', date: '2026-02-18', read: true, assignmentId: 8 },
     { id: 'rn-5', type: 'payment', title: 'Payment confirmed', body: 'Your payment of N7,000 for application BUH-0004 was received successfully', date: '2026-02-15', read: true, assignmentId: 4 },
+  ],
+  researchers: [
+    { id: 1, name: 'Anaise Chem', title: 'Miss', level: 'PG', department: 'Anatomy', school: 'School of Basic Sciences', institution: 'Babcock University', email: 'a.chem@babcock.edu.ng' },
+    { id: 2, name: 'Ademide Sharon', title: 'Mrs', level: 'PhD', department: 'Computer Science', school: 'School of Computing', institution: 'Babcock University', email: 'a.sharon@babcock.edu.ng' },
+    { id: 3, name: 'Amaka Hadiyat', title: 'Miss', level: 'Masters', department: 'Computer Science', school: 'School of Computing', institution: 'Babcock University', email: 'a.hadiyat@babcock.edu.ng' },
+    { id: 4, name: 'Balogun Fatima Ola', title: 'Dr', level: 'PhD', department: 'Public Health', school: 'School of Public Health', institution: 'Babcock University', email: 'b.ola@babcock.edu.ng' },
+    { id: 5, name: 'Okafor Chinwe David', title: 'Mr', level: 'UG', department: 'Biochemistry', school: 'School of Basic Sciences', institution: 'Babcock University', email: 'o.david@babcock.edu.ng' },
+  ],
+  payments: [
+    { id: 1, date: '2026-01-22', transactionId: '9F3A8C2B71', applicationId: 'BUH-0004', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Bank Transfer' },
+    { id: 2, date: '2026-01-22', transactionId: 'C82F9A1D7E', applicationId: 'BUH-0003', name: 'Funke Adebayo', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Card Payment' },
+    { id: 3, date: '2026-01-22', transactionId: 'F5A39C7D21', applicationId: 'BUH-0008', name: 'Amaka Hadiyat', level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
+    { id: 4, date: '2026-01-22', transactionId: 'A72D5E8F31', applicationId: 'BUH-0015', name: 'Anaise Chem', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Bank Transfer' },
+    { id: 5, date: '2026-01-22', transactionId: 'B91C4F3A62', applicationId: 'BUH-0002', name: 'Anaise Chem', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Card Payment' },
+    { id: 6, date: '2026-01-22', transactionId: 'D43E7B9C15', applicationId: 'BUH-0007', name: 'Ademide Sharon', level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
+    { id: 7, date: '2026-01-22', transactionId: 'E56F8A2D73', applicationId: 'BUH-0001', name: 'Okafor Chinwe David', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
+    { id: 8, date: '2026-01-22', transactionId: 'G84H1K5M29', applicationId: 'BUH-0006', name: 'Balogun Fatima Ola', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
+    { id: 9, date: '2026-01-22', transactionId: 'J17L3N6P48', applicationId: 'BUH-0009', name: 'Ademide Sharon', level: 'PG', amount: 'N20500', status: 'Pending', method: '' },
+    { id: 10, date: '2026-01-22', transactionId: 'K29M4O7Q51', applicationId: 'BUH-0010', name: 'Okafor Chinwe David', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
   ],
 }
 
@@ -161,9 +180,9 @@ const assignmentsSlice = createSlice({
 
     // Comments
     addComment(state, action) {
-      const { assignmentId, text, section } = action.payload
+      const { assignmentId, text, section, authorEmail } = action.payload
       const id = Date.now()
-      state.comments.unshift({ id, assignmentId, text, section, date: new Date().toISOString() })
+      state.comments.unshift({ id, assignmentId, text, section, date: new Date().toISOString(), authorEmail })
     },
     editComment(state, action) {
       const { commentId, newText } = action.payload
@@ -172,6 +191,13 @@ const assignmentsSlice = createSlice({
     deleteComment(state, action) {
       const id = action.payload
       state.comments = state.comments.filter(c => c.id !== id)
+    },
+
+    addPayment(state, action) {
+      state.payments.push(action.payload)
+    },
+    addResearcher(state, action) {
+      state.researchers.push(action.payload)
     },
 
     // Save proposal draft (researcher)
@@ -227,6 +253,8 @@ export const {
   addResearcherNotification,
   assignReviewer,
   unassignReviewer,
+  addPayment,
+  addResearcher,
 } = assignmentsSlice.actions
 
 export default assignmentsSlice.reducer

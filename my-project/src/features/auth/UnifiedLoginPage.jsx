@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from './authSlice';
 
 const ROLE_SETTINGS = {
@@ -8,6 +8,10 @@ const ROLE_SETTINGS = {
   researcher: { title: 'Researcher Login', color: '#003B95' },
   admin: { title: 'Administrator Login', color: '#003B95' },
 };
+
+const ADMIN_EMAILS = ['admin@babcock.edu.ng', 'buhrec@babcock.edu.ng'];
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MIN_PASSWORD_LEN = 6;
 
 // ── Researcher Sign-Up Form ───────────────────────────────────────────────────
 const ResearcherSignUp = ({ onBack }) => {
@@ -24,6 +28,14 @@ const ResearcherSignUp = ({ onBack }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!EMAIL_RE.test(form.email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+    if (form.password.length < MIN_PASSWORD_LEN) {
+      alert(`Password must be at least ${MIN_PASSWORD_LEN} characters`);
+      return;
+    }
     setIsLoading(true);
     setTimeout(() => {
       dispatch(login({ email: form.email, name: form.name, role: 'researcher' }));
@@ -133,6 +145,7 @@ const UnifiedLoginPage = () => {
   const dispatch = useDispatch();
   const { role } = useParams();
   const currentRole = role && ROLE_SETTINGS[role] ? role : 'reviewer';
+  const reviewerEmails = useSelector((s) => s.reviewers.items.map((r) => r.email.toLowerCase()));
 
   const [showSignUp, setShowSignUp] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -157,9 +170,30 @@ const UnifiedLoginPage = () => {
       setError('Please fill in all fields');
       return;
     }
+    if (!EMAIL_RE.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    if (formData.password.length < MIN_PASSWORD_LEN) {
+      setError(`Password must be at least ${MIN_PASSWORD_LEN} characters`);
+      return;
+    }
+
+    // Role-based email verification
+    const emailLower = formData.email.toLowerCase();
+    if (currentRole === 'admin' && !ADMIN_EMAILS.includes(emailLower)) {
+      setError('This email is not registered as an administrator');
+      return;
+    }
+    if (currentRole === 'reviewer' && !reviewerEmails.includes(emailLower)) {
+      setError('This email is not registered as a reviewer. Contact admin for access.');
+      return;
+    }
+
     setIsLoading(true);
     setTimeout(() => {
       const user = { email: formData.email, role: currentRole };
+      if (currentRole === 'admin') user.name = 'Admin';
       dispatch(login(user));
       setIsLoading(false);
       navigate('/dashboard');
