@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateReviewer } from '../../features/reviewers/reviewersSlice';
+import { updateReviewer, removeReviewer } from '../../features/reviewers/reviewersSlice';
+import { unassignAllFromReviewer } from '../../features/assignments/assignmentsSlice';
 import { ArrowLeft, MoreVertical, Mail, Phone, Building2, Award, Clock } from 'lucide-react';
 
 const ReviewerProfile = () => {
@@ -15,9 +16,6 @@ const ReviewerProfile = () => {
   const reviewer = useSelector((s) =>
     s.reviewers.items.find((r) => String(r.id) === String(id))
   );
-
-  // Derive active status from Redux (default to true if field not set)
-  const isDeactivated = reviewer ? reviewer.active === false : false;
 
   if (!reviewer) {
     return (
@@ -58,7 +56,7 @@ const ReviewerProfile = () => {
                   }}
                   className="w-full text-left px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors"
                 >
-                  {isDeactivated ? 'Reactivate Account' : 'Deactivate Account'}
+                  Remove Reviewer
                 </button>
               </div>
             </>
@@ -76,11 +74,7 @@ const ReviewerProfile = () => {
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
               <h1 className="text-2xl font-bold text-gray-900">{reviewer.name}</h1>
-              {isDeactivated ? (
-                <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">Deactivated</span>
-              ) : (
-                <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">Active</span>
-              )}
+              <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">Active</span>
             </div>
             <p className="text-gray-500 font-medium">{reviewer.specialization}</p>
           </div>
@@ -149,13 +143,10 @@ const ReviewerProfile = () => {
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowDeactivateModal(false)} />
           <div className="relative bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl text-center">
             <h2 className="text-xl font-bold text-gray-900 mb-2">
-              {isDeactivated ? 'Reactivate Account?' : 'Deactivate Account?'}
+              Remove Reviewer?
             </h2>
             <p className="text-gray-400 text-sm mb-8">
-              {isDeactivated
-                ? `This will reactivate ${reviewer.name}'s account. They will regain access to the review portal.`
-                : `This will deactivate ${reviewer.name}'s account. They will no longer be able to access the review portal.`
-              }
+              This will permanently remove {reviewer.name} from the system. They will no longer be able to access the review portal or be assigned new proposals.
             </p>
             <div className="flex space-x-4">
               <button
@@ -166,16 +157,14 @@ const ReviewerProfile = () => {
               </button>
               <button
                 onClick={() => {
-                  dispatch(updateReviewer({ id: Number(id), active: isDeactivated }));
+                  dispatch(unassignAllFromReviewer(Number(id)));
+                  dispatch(removeReviewer(Number(id)));
                   setShowDeactivateModal(false);
+                  navigate('/dashboard/reviewers');
                 }}
-                className={`flex-1 text-white py-3 rounded-full font-bold transition-all ${
-                  isDeactivated
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-[#C10000] hover:bg-red-700'
-                }`}
+                className="flex-1 text-white py-3 rounded-full font-bold transition-all bg-[#C10000] hover:bg-red-700"
               >
-                {isDeactivated ? 'Reactivate' : 'Deactivate'}
+                Remove
               </button>
             </div>
           </div>

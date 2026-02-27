@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from './authSlice';
+import { login, registerResearcher } from './authSlice';
 
 const ROLE_SETTINGS = {
   reviewer: { title: 'Reviewer Login', color: '#003B95' },
@@ -38,6 +38,8 @@ const ResearcherSignUp = ({ onBack }) => {
     }
     setIsLoading(true);
     setTimeout(() => {
+      // Save researcher credentials so they can log in later
+      dispatch(registerResearcher({ email: form.email, password: form.password, name: form.name }));
       dispatch(login({ email: form.email, name: form.name, role: 'researcher' }));
       setIsLoading(false);
       navigate('/dashboard');
@@ -145,7 +147,9 @@ const UnifiedLoginPage = () => {
   const dispatch = useDispatch();
   const { role } = useParams();
   const currentRole = role && ROLE_SETTINGS[role] ? role : 'reviewer';
-  const reviewerEmails = useSelector((s) => s.reviewers.items.map((r) => r.email.toLowerCase()));
+  const reviewers = useSelector((s) => s.reviewers.items);
+  const adminCredentials = useSelector((s) => s.auth.adminCredentials);
+  const registeredResearchers = useSelector((s) => s.auth.registeredResearchers);
 
   const [showSignUp, setShowSignUp] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -179,21 +183,73 @@ const UnifiedLoginPage = () => {
       return;
     }
 
-    // Role-based email verification
     const emailLower = formData.email.toLowerCase();
-    if (currentRole === 'admin' && !ADMIN_EMAILS.includes(emailLower)) {
-      setError('This email is not registered as an administrator');
-      return;
+    const enteredPassword = formData.password;
+
+    // ── Admin login ──
+    if (currentRole === 'admin') {
+      const adminMatch = adminCredentials.find(
+        (a) => a.email.toLowerCase() === emailLower && a.password === enteredPassword
+      );
+      if (!adminMatch) {
+        setError('Invalid admin email or password');
+        return;
+      }
     }
-    if (currentRole === 'reviewer' && !reviewerEmails.includes(emailLower)) {
-      setError('This email is not registered as a reviewer. Contact admin for access.');
-      return;
+
+    // ── Reviewer login ──
+    if (currentRole === 'reviewer') {
+      const reviewerMatch = reviewers.find(
+        (r) => r.email.toLowerCase() === emailLower
+      );
+      if (!reviewerMatch) {
+        setError('This email is not registered as a reviewer. Contact admin for access.');
+        return;
+      }
+      if (reviewerMatch.password !== enteredPassword) {
+        setError('Incorrect password');
+        return;
+      }
+      if (reviewerMatch.active === false) {
+        setError('This account has been deactivated. Contact admin.');
+        return;
+      }
+    }
+
+    // ── Researcher login ──
+    if (currentRole === 'researcher') {
+      const researcherMatch = registeredResearchers.find(
+        (r) => r.email.toLowerCase() === emailLower
+      );
+      if (!researcherMatch) {
+        setError('No account found. Please sign up first.');
+        return;
+      }
+      if (researcherMatch.password !== enteredPassword) {
+        setError('Incorrect password');
+        return;
+      }
     }
 
     setIsLoading(true);
     setTimeout(() => {
       const user = { email: formData.email, role: currentRole };
       if (currentRole === 'admin') user.name = 'Admin';
+      if (currentRole === 'reviewer') {
+        const r = reviewers.find((rv) => rv.email.toLowerCase() === emailLower);
+        if (r) {
+          user.name = r.name;
+          if (r.avatar) user.photo = r.avatar;
+        }
+      }
+      if (currentRole === 'researcher') {
+        const r = registeredResearchers.find((rv) => rv.email.toLowerCase() === emailLower);
+        if (r) {
+          user.name = r.name;
+          user.isVerified = !!r.isVerified;
+          if (r.photo) user.photo = r.photo;
+        }
+      }
       dispatch(login(user));
       setIsLoading(false);
       navigate('/dashboard');

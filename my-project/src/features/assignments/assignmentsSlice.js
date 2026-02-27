@@ -125,6 +125,28 @@ const assignmentsSlice = createSlice({
         }
       }
     },
+    unassignAllFromReviewer(state, action) {
+      const reviewerId = action.payload;
+      state.items.forEach((a) => {
+        if (a.reviewerId === reviewerId) {
+          a.reviewerId = null;
+          if (a.status !== 'Completed') {
+            a.status = 'Unaccepted';
+            // Notify researcher
+            const newNotif = {
+              id: `rn-unassign-${Date.now()}-${a.id}`,
+              type: 'revision',
+              title: 'Reviewer Unassigned',
+              body: `Your proposal "${a.title}" has been unassigned from its previous reviewer and is awaiting a new assignment.`,
+              date: new Date().toISOString(),
+              read: false,
+              assignmentId: a.id
+            };
+            state.researcherNotifications.unshift(newNotif);
+          }
+        }
+      });
+    },
 
     // Dashboard actions
     acceptFromDashboard(state, action) {
@@ -253,6 +275,7 @@ export const {
   addResearcherNotification,
   assignReviewer,
   unassignReviewer,
+  unassignAllFromReviewer,
   addPayment,
   addResearcher,
 } = assignmentsSlice.actions

@@ -36,6 +36,7 @@ const AddReviewer = () => {
         name: '',
         institution: '',
         email: '',
+        password: '',
         title: '',
         specialization: '',
         yearsOfExperience: '',
@@ -58,6 +59,10 @@ const AddReviewer = () => {
             setError('Name, Institution, and Email are required.');
             return;
         }
+        if (!form.password || form.password.length < 6) {
+            setError('Please set a password (at least 6 characters) for the reviewer.');
+            return;
+        }
 
         dispatch(addReviewer({
             id: Date.now(),
@@ -66,6 +71,7 @@ const AddReviewer = () => {
             specialization: form.specialization.trim(),
             institution: form.institution.trim(),
             email: form.email.trim(),
+            password: form.password,
             yearsOfExperience: parseInt(form.yearsOfExperience) || 0,
             ongoingAssignments: 0,
             avatar: photo,
@@ -152,6 +158,16 @@ const AddReviewer = () => {
                         value={form.email}
                         onChange={set('email')}
                         placeholder=""
+                    />
+                </FIELD>
+
+                <FIELD label="Initial Password">
+                    <input
+                        type="text"
+                        className={INPUT_CLS}
+                        value={form.password}
+                        onChange={set('password')}
+                        placeholder="Min 6 characters — share with the reviewer"
                     />
                 </FIELD>
 

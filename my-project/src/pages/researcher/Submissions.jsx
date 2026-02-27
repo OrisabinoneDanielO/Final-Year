@@ -43,15 +43,14 @@ const Submissions = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const currentStatuses = TABS.find((t) => t.label === activeTab)?.statuses ?? [];
-
   const filtered = useMemo(() => {
+    const currentStatuses = TABS.find((t) => t.label === activeTab)?.statuses ?? [];
     return allItems.filter((a) => {
       if (!currentStatuses.includes(a.status)) return false;
       if (!searchQuery.trim()) return true;
       return a.title.toLowerCase().includes(searchQuery.toLowerCase());
     });
-  }, [allItems, currentStatuses, searchQuery]);
+  }, [allItems, activeTab, searchQuery]);
 
   const showReviewer = activeTab !== 'Drafts';
 

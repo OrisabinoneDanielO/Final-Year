@@ -39,6 +39,7 @@ const store = configureStore({
 let currentUser = store.getState().auth.user;
 let prevAssignments = store.getState().assignments;
 let prevReviewers = store.getState().reviewers;
+let prevResearcherAuth = store.getState().auth.registeredResearchers;
 
 store.subscribe(() => {
   const state = store.getState();
@@ -60,6 +61,13 @@ store.subscribe(() => {
   if (state.reviewers !== prevReviewers) {
     prevReviewers = state.reviewers;
     persistState(REVIEWERS_KEY, state.reviewers);
+  }
+
+  // Researcher auth persistence
+  const nextResearchers = state.auth.registeredResearchers;
+  if (nextResearchers !== prevResearcherAuth) {
+    prevResearcherAuth = nextResearchers;
+    persistState('buhrec_researchers_auth', nextResearchers);
   }
 });
 

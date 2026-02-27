@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import ConfirmationModal from './ConfirmationModal';
 import { useNavigate, useLocation } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars

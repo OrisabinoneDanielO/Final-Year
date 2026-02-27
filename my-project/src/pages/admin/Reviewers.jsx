@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { X, MoreVertical } from 'lucide-react';
+import { removeReviewer } from '../../features/reviewers/reviewersSlice';
+import { unassignAllFromReviewer } from '../../features/assignments/assignmentsSlice';
 
 const FILTER_OPTIONS = ['Title', 'Years in Practice', 'Specialization', 'Institution'];
 
 // ── Reviewer Profile Modal ───────────────────────────────────────────────────
 const ReviewerModal = ({ reviewer, onClose }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDeactivateConfirm, setShowDeactivateConfirm] = useState(false);
-  const [isDeactivated, setIsDeactivated] = useState(false);
 
   const initials = reviewer.name
     .split(' ')
@@ -89,7 +91,7 @@ const ReviewerModal = ({ reviewer, onClose }) => {
                       }}
                       className="w-full text-left px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors"
                     >
-                      {isDeactivated ? 'Reactivate Reviewer' : 'Deactivate Reviewer'}
+                      Remove Reviewer
                     </button>
                   </div>
                 </>
@@ -157,12 +159,10 @@ const ReviewerModal = ({ reviewer, onClose }) => {
           />
           <div className="relative bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl text-center">
             <h2 className="text-xl font-bold text-gray-900 mb-2">
-              {isDeactivated ? 'Reactivate Account?' : 'Deactivate Account?'}
+              Remove Reviewer?
             </h2>
             <p className="text-gray-400 text-sm mb-8">
-              {isDeactivated
-                ? `This will reactivate ${reviewer.name}'s account. They will regain access to the review portal.`
-                : `This will deactivate ${reviewer.name}'s account. They will no longer be able to access the review portal.`}
+              This will permanently remove {reviewer.name} from the system. They will no longer be able to access the review portal or be assigned new proposals.
             </p>
             <div className="flex space-x-3">
               <button
@@ -173,15 +173,14 @@ const ReviewerModal = ({ reviewer, onClose }) => {
               </button>
               <button
                 onClick={() => {
-                  setIsDeactivated(!isDeactivated);
+                  dispatch(unassignAllFromReviewer(Number(reviewer.id)));
+                  dispatch(removeReviewer(Number(reviewer.id)));
                   setShowDeactivateConfirm(false);
+                  onClose();
                 }}
-                className={`flex-1 text-white py-3 rounded-full font-bold transition-all ${isDeactivated
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-[#C10000] hover:bg-red-700'
-                  }`}
+                className="flex-1 text-white py-3 rounded-full font-bold transition-all bg-[#C10000] hover:bg-red-700"
               >
-                {isDeactivated ? 'Reactivate' : 'Deactivate'}
+                Remove
               </button>
             </div>
           </div>

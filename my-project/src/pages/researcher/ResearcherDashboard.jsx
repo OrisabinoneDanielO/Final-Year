@@ -26,7 +26,7 @@ const ResearcherDashboard = () => {
   const [generatedOtp, setGeneratedOtp] = useState('');   // store for demo verification
   const [enteredOtp, setEnteredOtp] = useState(['', '', '', '', '', '']);
   const [otpError, setOtpError] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
+  const [_otpSent, setOtpSent] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
 
   // ── OTP refs for auto-advance ──────────────────────────────────────────────

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../features/auth/authSlice';
 import UnifiedLoginPage from '../features/auth/UnifiedLoginPage';
 import ProtectedRoute from './ProtectedRoute';
 import RoleGuard from './RoleGuard';
@@ -26,6 +28,8 @@ import AttachProposal from '../pages/researcher/AttachProposal';
 import NewSubmission from '../pages/researcher/NewSubmission';
 import ProposalPayment from '../pages/researcher/ProposalPayment';
 import LandingPage from '../pages/LandingPage';
+import ReviewerSettings from '../pages/reviewer/ReviewerSettings';
+import ResearcherSettings from '../pages/researcher/ResearcherSettings';
 
 // Shared components (used as pages)
 import Assignments from '../components/shared/Assignments';
@@ -34,6 +38,14 @@ import Responses from '../components/shared/Responses';
 import ReviewDetails from '../components/shared/ReviewDetails';
 import CommentsPage from '../components/shared/CommentsPage';
 import ApplicationView from '../components/shared/ApplicationView';
+
+/** Renders the correct settings page based on the logged-in user's role. */
+const SettingsRouter = () => {
+  const user = useSelector(selectUser);
+  if (user?.role === 'reviewer') return <ReviewerSettings />;
+  if (user?.role === 'researcher') return <ResearcherSettings />;
+  return <Navigate to="/dashboard" replace />;
+};
 
 const AppRoutes = () => {
   return (
@@ -95,6 +107,11 @@ const AppRoutes = () => {
           <Route path="submissions/:id" element={<ProposalDetail />} />
           <Route path="submissions/:id/review" element={<ResearcherProposalReview />} />
           <Route path="submissions/:id/attach" element={<AttachProposal />} />
+        </Route>
+
+        {/* Settings — reviewer + researcher */}
+        <Route element={<RoleGuard allowedRoles={['reviewer', 'researcher']} />}>
+          <Route path="settings" element={<SettingsRouter />} />
         </Route>
       </Route>
     </Routes>
