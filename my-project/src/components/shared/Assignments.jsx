@@ -11,7 +11,7 @@ const Assignments = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const reduxAssignments = useSelector(s => s.assignments.items)
-  
+
   // --- Modal State ---
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -71,33 +71,32 @@ const Assignments = () => {
 
   return (
     <div className="flex flex-col min-h-full">
-      <header className="flex flex-col md:flex-row justify-between mb-10 gap-4">
+      <header className="flex flex-col sm:flex-row justify-between mb-8 sm:mb-10 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Your Assignments</h1>
-          <p className="text-gray-500 font-medium">View all your assignments</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">Your Assignments</h1>
+          <p className="text-gray-500 text-sm font-medium">View and manage your proposal reviews</p>
         </div>
       </header>
 
-      {/* Tab Selection & Sort */}
-      <div className="flex items-center justify-between mb-4 overflow-x-auto pb-2 gap-4">
-        <div className="flex space-x-3">
+      {/* Tab Selection & Sort - Scrollable on mobile */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+        <div className="flex space-x-3 overflow-x-auto pb-2 no-scrollbar w-full sm:w-auto">
           {["Unaccepted", "Not Reviewed", "Ongoing", "Completed"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveFilter(tab)}
-              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${
-                activeFilter === tab ? "bg-[#003B95] text-white" : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-              }`}
+              className={`px-6 py-2.5 rounded-full text-sm font-black tracking-wide transition-all whitespace-nowrap shadow-sm shrink-0 ${activeFilter === tab ? "bg-[#003B95] text-white" : "bg-white text-gray-500 border border-gray-100 hover:bg-gray-50"
+                }`}
             >
               {tab}
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <button onClick={() => setIsSearchOpen((prev) => !prev)} className="p-2 rounded-full bg-white shadow hover:bg-gray-100 transition-colors">
+        <div className="flex items-center gap-3 flex-shrink-0 self-end sm:self-auto">
+          <button onClick={() => setIsSearchOpen((prev) => !prev)} className="p-2.5 rounded-full bg-white shadow-sm border border-gray-100 hover:bg-gray-50 transition-all active:scale-90">
             <Search size={20} className="text-gray-600" />
           </button>
-          <button onClick={cycleDateSort} className="p-2 rounded-full bg-white shadow hover:bg-gray-100 transition-colors">
+          <button onClick={cycleDateSort} className="p-2.5 rounded-full bg-white shadow-sm border border-gray-100 hover:bg-gray-50 transition-all active:scale-90">
             <SlidersHorizontal className="text-gray-600" size={20} />
           </button>
         </div>
@@ -124,39 +123,39 @@ const Assignments = () => {
             <motion.div
               layout
               key={item.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#E5E7EB] p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-6"
+              className="bg-white p-6 rounded-2xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 shadow-sm border border-gray-50 hover:shadow-md transition-all"
             >
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 {activeFilter === "Completed" && item.reviewResult && (
-                  <p className={`text-xs font-bold mb-1 ${item.reviewResult === "accepted" ? "text-[#003B95]" : "text-[#C10000]"}`}>
+                  <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${item.reviewResult === "accepted" ? "text-[#003B95]" : "text-[#C10000]"}`}>
                     {item.reviewResult === "accepted" ? "Review Accepted" : "Review Rejected"}
                   </p>
                 )}
 
                 {activeFilter === "Ongoing" && item.hasChanges && (
-                  <div className="flex items-center space-x-2 mb-1">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#003B95]" />
-                    <span className="text-xs font-bold text-[#003B95]">Changes effected by researcher</span>
+                  <div className="flex items-center gap-2 mb-2 bg-blue-50 w-fit px-3 py-1 rounded-full border border-blue-100">
+                    <span className="w-2 h-2 rounded-full bg-[#003B95] animate-pulse" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#003B95]">Changes Effected</span>
                   </div>
                 )}
 
-                <p className="text-lg font-bold text-gray-900">{item.title}</p>
+                <p className="text-base sm:text-lg font-black text-gray-900 leading-tight">{item.title}</p>
               </div>
 
-              <div className="flex space-x-3 w-full md:w-auto">
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto shrink-0">
                 {activeFilter === "Unaccepted" && (
                   <>
                     <button
-                      className="flex-1 md:flex-none bg-[#EAB308] text-white px-10 py-2.5 rounded-full font-bold active:scale-95 transition-transform"
+                      className="w-full sm:w-auto bg-[#EAB308] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-md hover:bg-yellow-600 transition-all active:scale-95"
                       onClick={() => dispatch(acceptFromDashboard(item.id))}
                     >
                       Accept
                     </button>
                     <button
-                      className="flex-1 md:flex-none bg-[#990000] text-white px-10 py-2.5 rounded-full font-bold active:scale-95 transition-transform"
+                      className="w-full sm:w-auto bg-[#991B1B] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-md hover:bg-red-900 transition-all active:scale-95"
                       onClick={() => openConfirmModal(item.id, 'decline')}
                     >
                       Decline
@@ -164,17 +163,26 @@ const Assignments = () => {
                   </>
                 )}
                 {activeFilter === "Not Reviewed" && (
-                  <button onClick={() => { dispatch(beginReview(item.id)); navigate(`/dashboard/review-details/${item.id}`); }} className="flex-1 md:flex-none bg-[#EAB308] text-white px-10 py-2.5 rounded-full font-bold">
+                  <button
+                    onClick={() => { dispatch(beginReview(item.id)); navigate(`/dashboard/review-details/${item.id}`); }}
+                    className="w-full sm:w-auto bg-[#EAB308] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-md hover:bg-yellow-600 transition-all active:scale-95"
+                  >
                     Begin Review
                   </button>
                 )}
                 {activeFilter === "Ongoing" && (
-                  <button onClick={() => navigate(`/dashboard/review-details/${item.id}`)} className="flex-1 md:flex-none bg-[#003B95] text-white px-10 py-2.5 rounded-full font-bold">
+                  <button
+                    onClick={() => navigate(`/dashboard/review-details/${item.id}`)}
+                    className="w-full sm:w-auto bg-[#003B95] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-md hover:bg-blue-900 transition-all active:scale-95"
+                  >
                     Continue Review
                   </button>
                 )}
                 {activeFilter === "Completed" && (
-                  <button onClick={() => navigate(`/dashboard/review-details/${item.id}`)} className="flex-1 md:flex-none bg-[#16A34A] hover:bg-[#15803D] text-white px-10 py-2.5 rounded-full font-bold">
+                  <button
+                    onClick={() => navigate(`/dashboard/review-details/${item.id}`)}
+                    className="w-full sm:w-auto bg-[#16A34A] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-md hover:bg-green-700 transition-all active:scale-95"
+                  >
                     Inspect Review
                   </button>
                 )}
@@ -185,7 +193,7 @@ const Assignments = () => {
       </div>
 
       {/* Confirmation Modal */}
-      <ConfirmationModal 
+      <ConfirmationModal
         isOpen={modalState.isOpen}
         type={modalState.type}
         onClose={() => setModalState({ ...modalState, isOpen: false })}

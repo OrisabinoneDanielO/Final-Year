@@ -43,9 +43,9 @@ const ReviewerModal = ({ reviewer, onClose }) => {
           <X size={20} className="text-gray-500" />
         </button>
 
-        <div className="p-8">
+        <div className="p-6 sm:p-8 max-h-[90vh] overflow-y-auto no-scrollbar">
           {/* ── Profile Header ─────────────────────────────── */}
-          <div className="flex items-center gap-5 mb-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 mb-8 text-center sm:text-left">
             {/* Avatar */}
             <div className="w-20 h-20 rounded-full bg-[#003B95]/20 flex items-center justify-center text-[#003B95] font-bold text-2xl flex-shrink-0 border-4 border-gray-100 shadow overflow-hidden">
               {reviewer.avatar ? (
@@ -64,11 +64,11 @@ const ReviewerModal = ({ reviewer, onClose }) => {
               <h2 className="text-xl font-bold text-gray-900 leading-tight">
                 {reviewer.name}
               </h2>
-              <p className="text-gray-500 text-sm mt-0.5">{reviewer.specialization}</p>
+              <p className="text-gray-500 text-sm mt-1">{reviewer.specialization}</p>
             </div>
 
             {/* 3-dot menu */}
-            <div className="relative flex-shrink-0">
+            <div className="relative flex-shrink-0 self-end sm:self-start">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -97,50 +97,50 @@ const ReviewerModal = ({ reviewer, onClose }) => {
             </div>
           </div>
 
-          {/* ── Info Row ──────────────────────────────────── */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          {/* ── Info Grid ──────────────────────────────────── */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 bg-gray-50 p-6 rounded-2xl border border-gray-100">
             <div>
-              <p className="text-xs text-gray-500 font-medium mb-1">Title</p>
+              <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1.5">Title</p>
               <p className="font-bold text-gray-900 text-sm">{reviewer.title}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 font-medium mb-1">Speciality</p>
+              <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1.5">Speciality</p>
               <p className="font-bold text-gray-900 text-sm leading-tight">
                 {reviewer.specialization}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 font-medium mb-1">Institution</p>
+              <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-1.5">Institution</p>
               <p className="font-bold text-gray-900 text-sm">{reviewer.institution}</p>
             </div>
           </div>
 
           {/* ── Statistics ────────────────────────────────── */}
           <div className="mb-8">
-            <h3 className="text-base font-bold text-gray-900 mb-3">Statistics</h3>
+            <h3 className="text-base font-black text-gray-900 uppercase tracking-widest mb-4">Statistics</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {statCards.map((card) => (
                 <div
                   key={card.label}
-                  className="bg-[#F3F4F6] rounded-2xl p-4 flex flex-col"
+                  className="bg-[#F3F4F6] rounded-2xl p-4 flex flex-col justify-center items-center text-center"
                 >
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide leading-tight mb-2">
+                  <p className="text-[8px] font-black text-gray-500 uppercase tracking-wide leading-tight mb-2">
                     {card.label}
                   </p>
-                  <p className="text-3xl font-bold text-gray-900">{card.value}</p>
+                  <p className="text-2xl sm:text-3xl font-black text-gray-900">{card.value}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* ── View Assignments Button ───────────────────── */}
-          <div className="flex justify-center">
+          <div className="flex justify-center pt-2">
             <button
               onClick={() => {
                 onClose();
                 navigate(`/dashboard/reviewers/${reviewer.id}/assignments`);
               }}
-              className="bg-[#003B95] text-white px-10 py-3 rounded-full font-bold hover:bg-blue-900 transition-colors shadow-md"
+              className="w-full sm:w-auto bg-[#003B95] text-white px-12 py-3.5 rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-blue-900 transition-all shadow-lg active:scale-95"
             >
               View Assignments
             </button>
@@ -191,6 +191,9 @@ const ReviewerModal = ({ reviewer, onClose }) => {
   );
 };
 
+// Helper for initials
+const initialsForReviewer = (name) => name?.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() || '??';
+
 // ── Main Reviewers Page ──────────────────────────────────────────────────────
 const Reviewers = () => {
   const navigate = useNavigate();
@@ -220,13 +223,13 @@ const Reviewers = () => {
         </button>
       </header>
 
-      {/* Filter Tabs */}
-      <div className="flex space-x-4 mb-8">
+      {/* Filter Tabs - Scrollable on mobile */}
+      <div className="flex overflow-x-auto pb-4 sm:pb-0 no-scrollbar space-x-4 mb-8">
         {FILTER_OPTIONS.map((option) => (
           <button
             key={option}
             onClick={() => setActiveFilter(activeFilter === option ? null : option)}
-            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${activeFilter === option
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all shrink-0 ${activeFilter === option
               ? 'bg-[#003B95] text-white'
               : 'bg-transparent text-gray-600 hover:bg-gray-100'
               }`}
@@ -242,25 +245,25 @@ const Reviewers = () => {
           <div
             key={reviewer.id}
             onClick={() => setSelectedReviewer(reviewer)}
-            className="bg-[#F3F4F6] p-5 rounded-2xl flex items-center justify-between hover:shadow-md hover:bg-[#E9EEF8] transition-all cursor-pointer"
+            className="bg-[#F3F4F6] p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:shadow-md hover:bg-[#E9EEF8] transition-all cursor-pointer"
           >
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 w-full sm:w-auto">
               {/* Avatar */}
               <div className="w-12 h-12 rounded-full bg-gray-300 overflow-hidden border-2 border-gray-200 flex-shrink-0">
                 {reviewer.avatar ? (
                   <img src={reviewer.avatar} alt={reviewer.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-[#003B95]/20 flex items-center justify-center text-[#003B95] font-bold text-lg">
-                    {reviewer.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                    {initialsForReviewer(reviewer.name)}
                   </div>
                 )}
               </div>
-              <div>
-                <p className="font-bold text-gray-900">{reviewer.name}</p>
-                <p className="text-gray-500 text-sm">{reviewer.specialization}</p>
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-gray-900 truncate">{reviewer.name}</p>
+                <p className="text-gray-500 text-sm truncate">{reviewer.specialization}</p>
               </div>
             </div>
-            <div className="text-[#003B95] font-semibold text-sm">
+            <div className="text-[#003B95] font-semibold text-sm self-end sm:self-auto shrink-0">
               {reviewer.ongoingAssignments} ongoing assignments
             </div>
           </div>

@@ -74,8 +74,8 @@ const AddReviewer = () => {
     return (
         <div className="min-h-screen bg-[#F3F4F6]">
             {/* ── Header ─────────────────────────────────────────────────────────── */}
-            <div className="flex items-center justify-between px-6 pt-6 pb-2">
-                <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 pt-6 pb-2">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
                     <button
                         onClick={() => navigate(-1)}
                         className="p-1.5 hover:bg-gray-200 rounded-full transition-colors"
@@ -87,7 +87,7 @@ const AddReviewer = () => {
                 </div>
                 <button
                     onClick={handleCreate}
-                    className="bg-[#003B95] hover:bg-blue-900 text-white px-6 py-2.5 rounded-full font-bold text-sm transition-colors"
+                    className="w-full sm:w-auto bg-[#003B95] hover:bg-blue-900 text-white px-8 py-3 rounded-full font-black text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
                 >
                     Create Reviewer
                 </button>
@@ -99,7 +99,7 @@ const AddReviewer = () => {
                 <div className="flex justify-center mb-8">
                     <button
                         onClick={() => fileRef.current?.click()}
-                        className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden hover:bg-gray-300 transition-colors relative"
+                        className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden hover:bg-gray-300 transition-colors relative border-4 border-white shadow-sm"
                         aria-label="Upload photo"
                     >
                         {photo ? (
@@ -119,7 +119,7 @@ const AddReviewer = () => {
 
                 {/* Error */}
                 {error && (
-                    <p className="text-sm text-[#C10000] font-semibold mb-4 text-center">{error}</p>
+                    <p className="text-sm text-[#C10000] font-semibold mb-4 text-center bg-red-50 p-3 rounded-xl">{error}</p>
                 )}
 
                 {/* Full-width fields */}
@@ -151,8 +151,8 @@ const AddReviewer = () => {
                     />
                 </FIELD>
 
-                {/* Two-column row: Title + Specialization */}
-                <div className="flex gap-4 mb-5">
+                {/* Two-column row: Title + Specialization - Stacks on mobile */}
+                <div className="flex flex-col sm:flex-row gap-5 mb-5">
                     <div className="flex-1">
                         <label className="block text-sm font-semibold text-gray-800 mb-1.5">Reviewer Title</label>
                         <input
@@ -180,8 +180,8 @@ const AddReviewer = () => {
                     </div>
                 </div>
 
-                {/* Years of Experience — half width */}
-                <div className="w-1/2 pr-2">
+                {/* Years of Experience — half width on tablet/desktop, full on mobile */}
+                <div className="w-full sm:w-1/2 sm:pr-2">
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Years of Experience</label>
                     <input
                         type="number"

@@ -123,13 +123,13 @@ const AdminAssignments = () => {
       <h1 className="text-2xl font-bold text-gray-900 mb-5">Assignments</h1>
 
       {/* Tabs + icons */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
+        <div className="flex overflow-x-auto pb-2 sm:pb-0 no-scrollbar space-x-2 w-full sm:w-auto">
           {TABS.map((tab) => (
             <button
               key={tab.label}
               onClick={() => { setActiveTab(tab.label); setSearchQuery(''); }}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${activeTab === tab.label
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all shrink-0 ${activeTab === tab.label
                 ? 'bg-[#003B95] text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
@@ -138,7 +138,7 @@ const AdminAssignments = () => {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <button onClick={() => { setSearchOpen((s) => !s); setSearchQuery(''); }} className="p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="Search">
             <Search size={18} className="text-gray-600" />
           </button>
@@ -175,28 +175,29 @@ const AdminAssignments = () => {
             const showReviewer = (activeTab === 'Assigned' || activeTab === 'Completed') && reviewer;
 
             return (
-              <div key={item.id} className="bg-[#F3F4F6] rounded-2xl px-6 py-5 flex items-center justify-between gap-4">
+              <div key={item.id} className="bg-[#F3F4F6] rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 transition-all hover:bg-white hover:shadow-md border border-transparent hover:border-gray-100">
                 {/* Left content */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 w-full text-left">
                   {activeTab === 'Completed' && item.reviewResult && (
-                    <p className={`text-xs font-bold mb-1 ${item.reviewResult === 'accepted' ? 'text-[#003B95]' : 'text-[#C10000]'
+                    <p className={`text-[10px] uppercase font-black tracking-widest mb-2 ${item.reviewResult === 'accepted' ? 'text-[#003B95]' : 'text-[#C10000]'
                       }`}>
                       {item.reviewResult === 'accepted' ? 'Review Accepted' : 'Review Rejected'}
                     </p>
                   )}
-                  <p className="font-bold text-gray-900 leading-snug">{item.title}</p>
+                  <p className="font-black text-gray-900 leading-snug break-words pr-2">{item.title}</p>
+
 
                   {/* Reviewer info */}
                   {showReviewer && (
-                    <div className="flex items-center gap-2 mt-2">
-                      <div className="w-6 h-6 rounded-full bg-[#003B95]/20 flex items-center justify-center text-[#003B95] font-bold text-[9px] shrink-0 border border-gray-300">
+                    <div className="flex items-center gap-2 mt-3 bg-white w-fit pr-3 py-1 rounded-full border border-gray-100 shadow-sm">
+                      <div className="w-6 h-6 rounded-full bg-[#003B95] flex items-center justify-center text-white font-black text-[9px] shrink-0 transform scale-[1.02]">
                         {getInitials(reviewer.name)}
                       </div>
-                      <span className="text-sm text-gray-600 font-medium">{reviewer.name}</span>
+                      <span className="text-xs text-gray-700 font-bold">{reviewer.name}</span>
                       {activeTab === 'Assigned' && (
                         <button
                           onClick={() => setAssigningItem(item)}
-                          className="ml-1 text-xs text-gray-400 hover:text-[#003B95] font-semibold underline transition-colors"
+                          className="ml-1 text-[10px] text-[#003B95] hover:text-blue-900 font-black uppercase tracking-widest underline transition-colors"
                         >
                           Change
                         </button>
@@ -206,18 +207,20 @@ const AdminAssignments = () => {
                 </div>
 
                 {/* Action button */}
-                <button
-                  onClick={() => {
-                    if (activeTab === 'Unassigned') {
-                      navigate(`/dashboard/assignments/${item.id}/assign`);
-                    } else {
-                      handleViewDetails(item.id);
-                    }
-                  }}
-                  className={`shrink-0 px-6 py-2.5 rounded-full font-bold text-sm transition-colors ${btn.cls}`}
-                >
-                  {btn.label}
-                </button>
+                <div className="w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
+                  <button
+                    onClick={() => {
+                      if (activeTab === 'Unassigned') {
+                        navigate(`/dashboard/assignments/${item.id}/assign`);
+                      } else {
+                        handleViewDetails(item.id);
+                      }
+                    }}
+                    className={`w-full sm:w-auto px-8 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-md transition-all active:scale-95 ${btn.cls}`}
+                  >
+                    {btn.label}
+                  </button>
+                </div>
               </div>
             );
           })

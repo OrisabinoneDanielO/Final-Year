@@ -107,33 +107,35 @@ const AssignProposal = () => {
 
             <div className="max-w-2xl mx-auto px-6 pb-16">
                 {/* Header */}
-                <p className="text-[#003B95] font-bold text-sm mb-1">You are about to assign...</p>
-                <h1 className="text-xl font-bold text-gray-900 leading-snug mb-1">{title}</h1>
-                <p className="text-sm text-gray-400 mb-8">{date}</p>
+                <div className="mt-2 sm:mt-0">
+                    <p className="text-[#003B95] font-black uppercase tracking-widest text-[10px] mb-2 sm:mb-1">You are about to assign...</p>
+                    <h1 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight mb-2 sm:mb-1 pr-4">{title}</h1>
+                    <p className="text-xs sm:text-sm font-black text-gray-400 uppercase tracking-widest mb-8">{date}</p>
+                </div>
 
                 {/* Proposal categories + Level */}
-                <div className="flex gap-4 mb-8">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-10 w-full">
                     {/* Category dropdown */}
-                    <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-800 mb-2">Proposal categories</label>
+                    <div className="flex-1 w-full">
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-800 mb-2">Proposal category</label>
                         <div className="relative">
                             <select
                                 value={category}
                                 onChange={e => setCategory(e.target.value)}
-                                className="w-full appearance-none bg-[#E5E7EB] rounded-xl px-4 py-3 pr-10 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-[#003B95] transition-all"
+                                className="w-full appearance-none bg-[#F3F4F6] border border-gray-200 rounded-xl px-4 py-3 sm:py-3.5 pr-10 text-sm font-bold text-gray-800 outline-none focus:ring-2 focus:ring-[#003B95] transition-all shadow-sm"
                             >
                                 {CATEGORIES.map(c => (
                                     <option key={c} value={c}>{c}</option>
                                 ))}
                             </select>
-                            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+                            <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#003B95] pointer-events-none" />
                         </div>
                     </div>
 
                     {/* Level (read-only) */}
-                    <div className="w-36">
-                        <label className="block text-sm font-semibold text-gray-800 mb-2">Proposal Level</label>
-                        <div className="bg-[#E5E7EB] rounded-xl px-4 py-3 text-sm text-gray-600 font-medium">
+                    <div className="w-full sm:w-40 shrink-0">
+                        <label className="block text-xs font-black uppercase tracking-widest text-gray-800 mb-2">Proposal Level</label>
+                        <div className="bg-[#F3F4F6] border border-gray-200 rounded-xl px-4 py-3 sm:py-3.5 text-sm text-gray-800 font-bold shadow-sm">
                             {level}
                         </div>
                     </div>

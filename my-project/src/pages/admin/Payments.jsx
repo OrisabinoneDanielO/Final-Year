@@ -4,17 +4,17 @@ import { Search, SlidersHorizontal, X } from 'lucide-react';
 // ── Dummy payment data ────────────────────────────────────────────────────────
 const ALL_PAYMENTS = [
   // Successful
-  { id: 1,  date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2',  name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000',  status: 'Successful', method: 'Bank Transfer' },
-  { id: 2,  date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M',  name: 'Funke Adebayo',      level: 'UG', amount: 'N7000',  status: 'Successful', method: 'Card Payment' },
-  { id: 3,  date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R',  name: 'Funke Adebayo',      level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
-  { id: 4,  date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2',  name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000',  status: 'Successful', method: 'Bank Transfer' },
-  { id: 5,  date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M',  name: 'Funke Adebayo',      level: 'UG', amount: 'N7000',  status: 'Successful', method: 'Card Payment' },
-  { id: 6,  date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R',  name: 'Funke Adebayo',      level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
+  { id: 1, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Bank Transfer' },
+  { id: 2, date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M', name: 'Funke Adebayo', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Card Payment' },
+  { id: 3, date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R', name: 'Funke Adebayo', level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
+  { id: 4, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Bank Transfer' },
+  { id: 5, date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M', name: 'Funke Adebayo', level: 'UG', amount: 'N7000', status: 'Successful', method: 'Card Payment' },
+  { id: 6, date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R', name: 'Funke Adebayo', level: 'PG', amount: 'N20500', status: 'Successful', method: 'Bank Transfer' },
   // Pending
-  { id: 7,  date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2',  name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000',  status: 'Pending', method: '' },
-  { id: 8,  date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M',  name: 'Funke Adebayo',      level: 'UG', amount: 'N7000',  status: 'Pending', method: '' },
-  { id: 9,  date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R',  name: 'Funke Adebayo',      level: 'PG', amount: 'N20500', status: 'Pending', method: '' },
-  { id: 10, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2',  name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000',  status: 'Pending', method: '' },
+  { id: 7, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
+  { id: 8, date: '1-22-26', transactionId: 'C82F9A1D7E', applicationId: 'BUH-7XQ82M', name: 'Funke Adebayo', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
+  { id: 9, date: '1-22-26', transactionId: 'F5A39C7D21', applicationId: 'BUH-3LZ91R', name: 'Funke Adebayo', level: 'PG', amount: 'N20500', status: 'Pending', method: '' },
+  { id: 10, date: '1-22-26', transactionId: '9F3A8C2B71', applicationId: 'BUH-A9F3K2', name: 'Adebola Ogunsiwaju', level: 'UG', amount: 'N7000', status: 'Pending', method: '' },
 ];
 
 const TABS = ['Successful', 'Pending'];
@@ -36,25 +36,27 @@ const Payments = () => {
   });
 
   return (
-    <div className="bg-white min-h-screen p-8">
+    <div className="bg-white min-h-screen p-4 sm:p-8">
       {/* Title */}
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Applicant Payments</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Applicant Payments</h1>
+        <p className="text-gray-500 text-sm font-medium">Keep track of all application fees</p>
+      </div>
 
       {/* Tabs + icons row */}
-      <div className="flex items-center justify-between mb-4">
-        {/* Status tabs */}
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        {/* Status tabs - Scrollable on mobile */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto no-scrollbar">
           {TABS.map((tab) => (
             <button
               key={tab}
               onClick={() => { setActiveTab(tab); setSearchQuery(''); }}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${
-                activeTab === tab
-                  ? 'bg-[#003B95] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all shrink-0 ${activeTab === tab
+                ? 'bg-[#003B95] text-white shadow-md'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
-              {tab === 'Successful' ? 'Succesful' : tab}
+              {tab === 'Successful' ? 'Successful' : tab}
             </button>
           ))}
         </div>
@@ -100,18 +102,18 @@ const Payments = () => {
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl">
-        <table className="w-full text-sm border-collapse">
+      <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm no-scrollbar">
+        <table className="w-full text-sm border-collapse min-w-[1000px]">
           <thead>
             <tr className="bg-[#003B95] text-white">
-              <th className="text-left px-4 py-3 font-semibold rounded-tl-xl">Date</th>
-              <th className="text-left px-4 py-3 font-semibold">Transaction ID</th>
-              <th className="text-left px-4 py-3 font-semibold">Application ID</th>
-              <th className="text-left px-4 py-3 font-semibold">Name</th>
-              <th className="text-left px-4 py-3 font-semibold">Level</th>
-              <th className="text-left px-4 py-3 font-semibold">Amount</th>
-              <th className="text-left px-4 py-3 font-semibold">Payment Status</th>
-              <th className="text-left px-4 py-3 font-semibold rounded-tr-xl">Payment Method</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px] rounded-tl-2xl">Date</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px]">Transaction ID</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px]">Application ID</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px]">Name</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px]">Level</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px]">Amount</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px]">Status</th>
+              <th className="text-left px-6 py-4 font-black uppercase tracking-widest text-[10px] rounded-tr-2xl">Method</th>
             </tr>
           </thead>
           <tbody>
@@ -125,24 +127,23 @@ const Payments = () => {
               filtered.map((payment, idx) => (
                 <tr
                   key={payment.id}
-                  className={`border-b border-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F9FAFB]'} hover:bg-blue-50 transition-colors`}
+                  className={`border-b border-gray-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-[#F9FAFB]'} hover:bg-blue-50/50 transition-colors`}
                 >
-                  <td className="px-4 py-3 text-gray-700">{payment.date}</td>
-                  <td className="px-4 py-3 text-gray-700 font-mono">{payment.transactionId}</td>
-                  <td className="px-4 py-3 text-gray-700">{payment.applicationId}</td>
-                  <td className="px-4 py-3 text-gray-900 font-medium">{payment.name}</td>
-                  <td className="px-4 py-3 text-gray-700">{payment.level}</td>
-                  <td className="px-4 py-3 text-gray-900 font-medium">{payment.amount}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-4 text-gray-600 font-medium">{payment.date}</td>
+                  <td className="px-6 py-4 text-gray-500 font-mono text-xs">{payment.transactionId}</td>
+                  <td className="px-6 py-4 text-gray-600 font-bold">{payment.applicationId}</td>
+                  <td className="px-6 py-4 text-gray-900 font-bold">{payment.name}</td>
+                  <td className="px-6 py-4 text-gray-600 font-medium">{payment.level}</td>
+                  <td className="px-6 py-4 text-gray-900 font-black">{payment.amount}</td>
+                  <td className="px-6 py-4">
                     <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-bold text-white ${
-                        payment.status === 'Successful' ? 'bg-green-500' : 'bg-yellow-500'
-                      }`}
+                      className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${payment.status === 'Successful' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                        }`}
                     >
                       {payment.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-700">{payment.method || '—'}</td>
+                  <td className="px-6 py-4 text-gray-500 text-xs font-medium">{payment.method || '—'}</td>
                 </tr>
               ))
             )}

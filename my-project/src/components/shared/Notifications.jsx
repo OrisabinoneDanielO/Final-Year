@@ -22,18 +22,23 @@ const TYPE_ICON = {
 const AdminNotifications = ({ notifications, navigate, dispatch }) => {
   const unread = notifications.filter(n => !n.read).length;
   return (
-    <div className="min-h-screen bg-[#F3F4F6] p-6">
-      <div className="flex items-start gap-4 mb-8">
-        <button onClick={() => navigate(-1)} className="mt-1 p-2 hover:bg-gray-200 rounded-full transition-colors shrink-0" aria-label="Go back">
-          <ArrowLeft size={20} className="text-gray-800" />
-        </button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">Your Notifications</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Updates on proposals and researcher submissions</p>
+    <div className="min-h-screen bg-[#F3F4F6] p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div className="flex items-start gap-4 flex-1">
+          <button onClick={() => navigate(-1)} className="mt-1 p-2 hover:bg-gray-200 rounded-full transition-colors shrink-0" aria-label="Go back">
+            <ArrowLeft size={20} className="text-gray-800" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-black text-gray-900 leading-tight">Your Notifications</h1>
+            <p className="text-gray-500 text-sm mt-0.5 font-medium">Updates on proposals and researcher submissions</p>
+          </div>
         </div>
         {unread > 0 && (
-          <button onClick={() => dispatch(markAllNotificationsRead())} className="shrink-0 px-4 py-2 bg-white rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-100 transition-colors">
-            Mark all as read
+          <button
+            onClick={() => dispatch(markAllNotificationsRead())}
+            className="w-full sm:w-auto px-6 py-2.5 bg-white rounded-full text-xs font-black uppercase tracking-widest text-[#003B95] shadow-sm hover:bg-gray-50 transition-all border border-[#003B95]/10 active:scale-95"
+          >
+            Mark all read
           </button>
         )}
       </div>
@@ -50,19 +55,24 @@ const AdminNotifications = ({ notifications, navigate, dispatch }) => {
           </div>
         ) : (
           notifications.map((n) => (
-            <div key={n.id} className={`bg-[#E5E7EB] rounded-2xl px-6 py-5 flex items-start justify-between gap-4 ${!n.read ? 'border-l-4 border-[#003B95]' : ''}`}>
+            <div key={n.id} className={`bg-white rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm border border-transparent hover:border-blue-100 transition-all ${!n.read ? 'border-l-4 border-l-[#003B95]' : ''}`}>
               <div className="flex-1 min-w-0">
-                <button onClick={() => navigate(`/dashboard/assignments/${n.assignmentId}/view`)} className="text-left text-[#003B95] font-semibold text-sm leading-snug hover:underline">
+                <button
+                  onClick={() => navigate(`/dashboard/assignments/${n.assignmentId}/view`)}
+                  className="text-left text-[#003B95] font-black text-sm leading-snug hover:underline block mb-2"
+                >
                   {n.title}
                 </button>
-                <p className="text-xs text-gray-500 mt-1.5">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                   {new Date(n.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                 </p>
               </div>
-              {!n.read
-                ? <span className="text-xs font-bold text-[#C10000] bg-red-50 px-2 py-0.5 rounded-full shrink-0 mt-0.5">New</span>
-                : <span className="text-xs text-gray-400 shrink-0 mt-0.5">Seen</span>
-              }
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                {!n.read
+                  ? <span className="text-[10px] font-black uppercase tracking-widest text-[#C10000] bg-red-50 px-3 py-1 rounded-full border border-red-100 animate-pulse">New</span>
+                  : <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Seen</span>
+                }
+              </div>
             </div>
           ))
         )}
@@ -76,50 +86,64 @@ const AdminNotifications = ({ notifications, navigate, dispatch }) => {
 
 // ── Reviewer view ─────────────────────────────────────────────────────────────
 const ReviewerNotifications = ({ notifications, unreadCount, navigate, dispatch }) => (
-  <div className="min-h-screen bg-[#F3F4F6] p-6">
-    <div className="flex items-start gap-4 mb-6">
-      <button onClick={() => navigate(-1)} className="mt-0.5 p-2 hover:bg-gray-200 rounded-full transition-colors shrink-0" aria-label="Go back">
-        <ArrowLeft size={20} className="text-gray-800" />
-      </button>
-      <div className="flex-1">
-        <h1 className="text-xl font-bold text-gray-900">Your Notifications</h1>
-        <p className="text-sm text-gray-500 mt-0.5">The following proposals have changes effected by the researchers</p>
+  <div className="min-h-screen bg-[#F3F4F6] p-4 sm:p-6">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div className="flex items-start gap-4 flex-1">
+        <button onClick={() => navigate(-1)} className="mt-1 p-2 hover:bg-gray-200 rounded-full transition-colors shrink-0" aria-label="Go back">
+          <ArrowLeft size={20} className="text-gray-800" />
+        </button>
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight">Your Notifications</h1>
+          <p className="text-sm text-gray-500 mt-0.5 font-medium">Proposal updates from researchers</p>
+        </div>
       </div>
       {unreadCount > 0 && (
-        <button onClick={() => dispatch(markAllNotificationsRead())} className="shrink-0 px-4 py-2 bg-white rounded-full text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-100 transition-colors">
-          Mark all as read
+        <button
+          onClick={() => dispatch(markAllNotificationsRead())}
+          className="w-full sm:w-auto px-6 py-2.5 bg-[#003B95] rounded-full text-[10px] font-black uppercase tracking-widest text-white shadow-md hover:bg-blue-900 transition-all active:scale-95"
+        >
+          Mark all read
         </button>
       )}
     </div>
     {unreadCount > 0 && (
-      <p className="text-sm text-gray-500 mb-4 max-w-3xl mx-auto">
-        You have <span className="font-bold text-gray-800">{unreadCount}</span> unread notification{unreadCount !== 1 ? 's' : ''}
+      <p className="text-sm text-gray-500 mb-6 max-w-3xl mx-auto flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-[#003B95] animate-pulse" />
+        You have <span className="font-black text-gray-900">{unreadCount}</span> unread notification{unreadCount !== 1 ? 's' : ''}
       </p>
     )}
-    <div className="space-y-3 max-w-3xl mx-auto">
+    <div className="space-y-4 max-w-3xl mx-auto">
       {notifications.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center">
-          <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-            <Bell size={24} className="text-gray-400" />
+        <div className="bg-white rounded-3xl p-16 text-center shadow-sm">
+          <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-6">
+            <Bell size={28} className="text-[#003B95] opacity-50" />
           </div>
-          <p className="font-bold text-gray-500">No notifications</p>
-          <p className="text-gray-400 text-sm mt-1">You're all caught up!</p>
+          <p className="font-black text-gray-900 text-lg">No notifications</p>
+          <p className="text-gray-400 text-sm mt-2 font-medium">You're all caught up for now!</p>
         </div>
       ) : (
         notifications.map((n) => (
-          <div key={n.id} className={`bg-white rounded-2xl p-5 shadow-sm flex items-start justify-between gap-4 ${!n.read ? 'border-l-4 border-[#003B95]' : ''}`}>
+          <div key={n.id} className={`bg-white rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 transition-all hover:shadow-md ${!n.read ? 'border-l-4 border-l-[#003B95]' : ''}`}>
             <div className="flex-1 min-w-0">
-              <button onClick={() => { dispatch(markNotificationRead(n.id)); navigate(`/dashboard/review-details/${n.assignmentId}`); }} className="text-left text-[#003B95] font-semibold text-sm hover:underline leading-snug">
+              <button
+                onClick={() => { dispatch(markNotificationRead(n.id)); navigate(`/dashboard/review-details/${n.assignmentId}`); }}
+                className="text-left text-[#003B95] font-black text-sm hover:underline leading-snug block mb-2"
+              >
                 {n.title}
               </button>
-              <p className="text-xs text-gray-400 mt-1.5">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 {new Date(n.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
               </p>
             </div>
-            <div className="flex flex-col items-end gap-2 shrink-0">
-              {!n.read ? <span className="text-xs font-bold text-[#C10000] bg-red-50 px-2 py-0.5 rounded-full">New</span> : <span className="text-xs text-gray-400">Seen</span>}
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center w-full sm:w-auto gap-4 shrink-0">
+              {!n.read
+                ? <span className="text-[10px] font-black uppercase tracking-widest text-[#C10000] bg-red-50 px-3 py-1 rounded-full border border-red-100">New</span>
+                : <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Seen</span>}
               {!n.read && (
-                <button onClick={() => dispatch(markNotificationRead(n.id))} className="text-xs font-semibold text-gray-600 bg-[#E5E7EB] px-3 py-1 rounded-full hover:bg-gray-300 transition-colors">
+                <button
+                  onClick={() => dispatch(markNotificationRead(n.id))}
+                  className="px-4 py-2 rounded-full bg-gray-100 text-[10px] font-black uppercase tracking-widest text-gray-700 hover:bg-gray-200 transition-all active:scale-95"
+                >
                   Mark read
                 </button>
               )}
@@ -133,8 +157,8 @@ const ReviewerNotifications = ({ notifications, unreadCount, navigate, dispatch 
 
 // ── Researcher view ───────────────────────────────────────────────────────────
 const ResearcherNotifications = ({ notifications, unreadCount, navigate, dispatch }) => (
-  <div className="min-h-full bg-white p-8">
-    <div className="flex items-center justify-between mb-6">
+  <div className="min-h-full bg-white p-4 sm:p-8">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
@@ -144,12 +168,12 @@ const ResearcherNotifications = ({ notifications, unreadCount, navigate, dispatc
           <ArrowLeft size={18} className="text-gray-700" />
         </button>
         <div>
-          <h1 className="text-[22px] font-bold text-gray-900">Notifications</h1>
-          <p className="text-sm text-gray-400 mt-0.5">Updates on your proposals and payments</p>
+          <h1 className="text-[22px] sm:text-2xl font-black text-gray-900 leading-tight">Notifications</h1>
+          <p className="text-sm text-gray-400 mt-0.5 font-medium">Updates on your proposals and payments</p>
         </div>
       </div>
       {unreadCount > 0 && (
-        <span className="text-xs font-bold text-white bg-[#C10000] px-2.5 py-1 rounded-full">
+        <span className="text-[10px] font-black text-white bg-[#C10000] px-4 py-1.5 rounded-full uppercase tracking-widest shadow-md">
           {unreadCount} new
         </span>
       )}
@@ -157,41 +181,41 @@ const ResearcherNotifications = ({ notifications, unreadCount, navigate, dispatc
 
     <div className="space-y-4">
       {notifications.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-28 gap-4">
-          <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-            <Bell size={24} className="text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-28 gap-4 bg-gray-50 rounded-3xl border border-gray-100 border-dashed">
+          <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm">
+            <Bell size={28} className="text-gray-300" />
           </div>
-          <p className="text-gray-400 font-bold">No notifications yet</p>
+          <p className="text-gray-400 font-black tracking-wide">No notifications yet</p>
         </div>
       ) : (
         notifications.map((n) => (
           <div
             key={n.id}
-            className={`bg-[#E5E7EB] rounded-2xl px-6 py-5 flex items-start justify-between gap-4 ${!n.read ? 'border-l-4 border-[#003B95]' : ''}`}
+            className={`bg-[#F9FAFB] rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 transition-all hover:bg-[#F3F4F6] border border-transparent hover:border-blue-50 ${!n.read ? 'border-l-4 border-l-[#003B95] shadow-sm' : ''}`}
           >
             {/* Icon + text */}
-            <div className="flex items-start gap-3 flex-1 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                {TYPE_ICON[n.type] ?? <Bell size={16} className="text-gray-500" />}
+            <div className="flex items-start gap-4 flex-1 min-w-0">
+              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-gray-100">
+                {TYPE_ICON[n.type] ?? <Bell size={18} className="text-gray-500" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-bold text-gray-900 text-sm leading-snug">{n.title}</p>
-                <p className="text-xs text-gray-500 mt-1 leading-relaxed">{n.body}</p>
-                <p className="text-xs text-gray-400 mt-1.5">
+                <p className="font-black text-gray-900 text-sm leading-snug mb-1">{n.title}</p>
+                <p className="text-xs text-gray-500 leading-relaxed font-medium mb-2">{n.body}</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                   {new Date(n.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                 </p>
               </div>
             </div>
 
             {/* Badge + mark read */}
-            <div className="flex flex-col items-end gap-2 shrink-0">
+            <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center w-full sm:w-auto gap-3 shrink-0">
               {!n.read
-                ? <span className="text-xs font-bold text-[#C10000] bg-red-50 px-2 py-0.5 rounded-full">New</span>
-                : <span className="text-xs text-gray-400">Seen</span>}
+                ? <span className="text-[10px] font-black uppercase tracking-widest text-[#C10000] bg-red-50 px-3 py-1 rounded-full border border-red-100">New</span>
+                : <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Seen</span>}
               {!n.read && (
                 <button
                   onClick={() => dispatch(markResearcherNotificationRead(n.id))}
-                  className="text-xs font-semibold text-gray-600 bg-white px-3 py-1 rounded-full hover:bg-gray-100 transition-colors shadow-sm"
+                  className="w-full sm:w-auto text-[10px] font-black uppercase tracking-widest text-gray-600 bg-white px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-all shadow-sm active:scale-95"
                 >
                   Mark read
                 </button>

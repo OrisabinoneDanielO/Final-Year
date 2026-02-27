@@ -10,7 +10,7 @@ const LandingPage = () => {
     const [sopSubView, setSopSubView] = useState('steps'); // 'steps' or 'consent'
     const [openStep, setOpenStep] = useState(null);
 
-    const heroImage = '/buhrec_hero_laptop_1772142976348.png';
+    const heroImage = '/buhrec_hero_clean_hq_1772149923365.png';
     const objectiveImage = '/Screenshot 2026-02-26 231433.png';
     const nhrecLogo = '/download.jpg';
     const requirementsImage = '/Screenshot 2026-02-26 233303.png';

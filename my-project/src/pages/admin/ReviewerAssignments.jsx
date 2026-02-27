@@ -39,20 +39,22 @@ const ReviewerAssignments = () => {
       </button>
 
       {/* Title */}
-      <h1 className="text-2xl font-bold text-gray-900 mb-1">
-        {reviewer ? `${reviewer.name}'s` : "Reviewer's"} Assignments
-      </h1>
-      <p className="text-sm text-gray-500 mb-6">Proposals assigned to this reviewer</p>
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
+          {reviewer ? `${reviewer.name}'s` : "Reviewer's"} Assignments
+        </h1>
+        <p className="text-sm text-gray-500">Proposals assigned to this reviewer</p>
+      </div>
 
-      {/* Status Filter Tabs */}
-      <div className="flex space-x-3 mb-8 overflow-x-auto pb-2">
+      {/* Status Filter Tabs - Scrollable on mobile */}
+      <div className="flex space-x-3 mb-8 overflow-x-auto pb-2 no-scrollbar">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${activeTab === tab
-                ? 'bg-[#003B95] text-white'
-                : 'bg-white text-gray-600 border border-gray-300 hover:bg-gray-100'
+            className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all whitespace-nowrap shadow-sm shrink-0 ${activeTab === tab
+              ? 'bg-[#003B95] text-white'
+              : 'bg-white text-gray-600 border border-gray-100 hover:bg-gray-50'
               }`}
           >
             {tab}
@@ -70,17 +72,17 @@ const ReviewerAssignments = () => {
           filteredAssignments.map((assignment) => (
             <div
               key={assignment.id}
-              className="bg-white p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm"
+              className="bg-white p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 shadow-sm border border-gray-50 hover:shadow-md transition-all"
             >
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 {assignment.hasChanges && (
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#003B95]" />
-                    <span className="text-sm font-bold text-[#003B95]">Changes Effected By Researcher</span>
+                  <div className="flex items-center gap-2 mb-3 bg-blue-50 w-fit px-3 py-1 rounded-full border border-blue-100">
+                    <span className="w-2 h-2 rounded-full bg-[#003B95] animate-pulse" />
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#003B95]">Changes Effected</span>
                   </div>
                 )}
                 {activeTab === 'Completed' && assignment.reviewResult && (
-                  <p className={`text-xs font-bold mb-1 ${assignment.reviewResult === 'accepted' ? 'text-[#003B95]' : 'text-[#C10000]'
+                  <p className={`text-[10px] font-black uppercase tracking-[0.2em] mb-2 ${assignment.reviewResult === 'accepted' ? 'text-[#003B95]' : 'text-[#C10000]'
                     }`}>
                     {assignment.reviewResult === 'accepted' ? 'Review Accepted' : 'Review Rejected'}
                   </p>
@@ -88,12 +90,12 @@ const ReviewerAssignments = () => {
                 <p className="text-base font-bold text-gray-900 leading-snug">{assignment.title}</p>
               </div>
 
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto shrink-0">
                 {/* Unassign — only for non-completed */}
                 {activeTab !== 'Completed' && (
                   <button
                     onClick={() => setConfirmUnassign(assignment)}
-                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-[#C10000] text-[#C10000] font-bold text-sm hover:bg-red-50 transition-colors"
+                    className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 rounded-full border-2 border-[#C10000] text-[#C10000] font-black text-[10px] uppercase tracking-widest hover:bg-red-50 transition-all active:scale-95"
                   >
                     <UserMinus size={14} />
                     Unassign
@@ -101,7 +103,7 @@ const ReviewerAssignments = () => {
                 )}
                 <button
                   onClick={() => navigate(`/dashboard/reviewers/${id}/assignments/${assignment.id}/view`)}
-                  className="bg-[#003B95] text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-blue-900 transition-colors"
+                  className="w-full sm:w-auto bg-[#003B95] text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-blue-900 transition-all shadow-md active:scale-95"
                 >
                   View Details
                 </button>

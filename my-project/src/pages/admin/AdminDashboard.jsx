@@ -55,10 +55,10 @@ const AdminDashboard = () => {
   const displayName = (user?.name || user?.email?.split('@')[0] || 'Admin').split(/[\s._-]/)[0];
 
   return (
-    <div className="p-8 bg-white min-h-screen">
-      <header className="mb-8 flex justify-between items-center">
+    <div className="p-4 sm:p-8 bg-white min-h-screen">
+      <header className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 capitalize">Welcome, {displayName}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 capitalize">Welcome, {displayName}</h1>
           <p className="text-gray-500 text-sm font-medium">Here are your stats!</p>
         </div>
         <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
@@ -67,23 +67,23 @@ const AdminDashboard = () => {
         </button>
       </header>
 
-      {/* Row 1: 4 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      {/* Row 1: Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {statCards.slice(0, 4).map((stat, i) => (
           <div key={i} className="bg-[#F3F4F6] p-6 rounded-2xl">
             <p className="text-[10px] font-black text-gray-800 uppercase mb-2 tracking-wider">{stat.label}</p>
-            <p className="text-4xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-3xl sm:text-4xl font-bold text-gray-900">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Dynamic Filter Row */}
-      <div className="flex space-x-3 mb-8">
+      {/* Dynamic Filter Row - Scrollable on mobile */}
+      <div className="flex overflow-x-auto pb-4 sm:pb-0 sm:overflow-visible space-x-3 mb-8 no-scrollbar scroll-smooth">
         {filterOptions.map((option) => (
           <button
             key={option}
             onClick={() => setActiveFilter(option)}
-            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${activeFilter === option
+            className={`px-6 py-2 rounded-full text-sm font-semibold transition-all shrink-0 sm:shrink ${activeFilter === option
               ? 'bg-[#003B95] text-white shadow-md'
               : 'bg-[#F3F4F6] text-gray-500 hover:bg-gray-200'
               }`}
@@ -93,12 +93,12 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* Row 2: 3 Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+      {/* Row 2: Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         {statCards.slice(4).map((stat, i) => (
           <div key={i} className="bg-[#F3F4F6] p-6 rounded-2xl">
             <p className="text-[10px] font-black text-gray-800 uppercase mb-2 tracking-wider">{stat.label}</p>
-            <p className="text-4xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-3xl sm:text-4xl font-bold text-gray-900">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -107,12 +107,12 @@ const AdminDashboard = () => {
       <h2 className="text-xl font-bold mb-4 text-gray-900 font-sans">Your Unassigned Assignments</h2>
       <div
         onClick={() => navigate('/dashboard/assignments')}
-        className="group bg-[#F3F4F6] p-8 rounded-2xl flex justify-between items-center cursor-pointer hover:shadow-md transition-all active:scale-[0.99]"
+        className="group bg-[#F3F4F6] p-6 sm:p-8 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer hover:shadow-md transition-all active:scale-[0.99]"
       >
-        <p className="text-lg font-semibold text-gray-900">
+        <p className="text-base sm:text-lg font-semibold text-gray-900">
           You have <span className="text-[#003B95]">{stats.unassigned * 2.5}</span> Unassigned Assignments
         </p>
-        <div className="p-3 bg-gray-200 rounded-full group-hover:bg-[#003B95] group-hover:text-white transition-colors">
+        <div className="p-3 bg-gray-200 rounded-full group-hover:bg-[#003B95] group-hover:text-white transition-colors self-end sm:self-auto">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
       </div>
