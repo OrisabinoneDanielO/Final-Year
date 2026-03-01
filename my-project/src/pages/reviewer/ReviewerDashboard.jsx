@@ -2,15 +2,15 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectUser } from '../../features/auth/authSlice';
-import { acceptFromDashboard, declineFromDashboard } from '../../features/assignments/assignmentsSlice';
+import { acceptAssignment, declineAssignment } from '../../features/reviews/reviewsSlice';
 import { Bell, X } from 'lucide-react';
 
 const ReviewerDashboard = () => {
   const user = useSelector(selectUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const allAssignments = useSelector(s => s.assignments.items);
-  const notifications = useSelector(s => s.assignments.notifications);
+  const allAssignments = useSelector(s => s.proposals.items);
+  const notifications = useSelector(s => s.notifications.items);
   const [declineTarget, setDeclineTarget] = React.useState(null);
 
   // Compute stats from Redux
@@ -79,7 +79,7 @@ const ReviewerDashboard = () => {
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto shrink-0">
                 <button
-                  onClick={() => dispatch(acceptFromDashboard(task.id))}
+                  onClick={() => dispatch(acceptAssignment(task.id))}
                   className="w-full sm:w-auto bg-[#EAB308] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest hover:bg-yellow-600 shadow-md transition-all active:scale-95"
                 >
                   Accept
@@ -117,7 +117,7 @@ const ReviewerDashboard = () => {
                 Cancel
               </button>
               <button
-                onClick={() => { dispatch(declineFromDashboard(declineTarget)); setDeclineTarget(null); }}
+                onClick={() => { dispatch(declineAssignment(declineTarget)); setDeclineTarget(null); }}
                 className="flex-1 py-2.5 rounded-full bg-[#991B1B] text-white font-semibold text-sm hover:bg-red-900 transition-colors"
               >
                 Yes, Decline

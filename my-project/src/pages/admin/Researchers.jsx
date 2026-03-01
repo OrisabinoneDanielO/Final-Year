@@ -85,8 +85,8 @@ const ResearcherModal = ({ researcher, onClose }) => {
 
 const Researchers = () => {
   const [selectedResearcher, setSelectedResearcher] = useState(null);
-  const researchersList = useSelector((s) => s.assignments.researchers);
-  const allAssignments = useSelector((s) => s.assignments.items);
+  const researchersList = useSelector((s) => s.researchers.items);
+  const allAssignments = useSelector((s) => s.proposals.items);
 
   // Enrich researchers with live stats from assignments
   const researchers = researchersList.map((r) => {

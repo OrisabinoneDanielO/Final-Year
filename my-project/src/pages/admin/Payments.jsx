@@ -5,7 +5,7 @@ import { Search, SlidersHorizontal, X } from 'lucide-react';
 const TABS = ['Successful', 'Pending'];
 
 const Payments = () => {
-  const allPayments = useSelector((s) => s.assignments.payments);
+  const allPayments = useSelector((s) => s.payments.items);
   const [activeTab, setActiveTab] = useState('Successful');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

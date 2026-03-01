@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { assignReviewer, unassignReviewer } from '../../features/assignments/assignmentsSlice';
+import { assignReviewer, unassignReviewer } from '../../features/proposals/proposalsSlice';
 
 // Reviewer logic - MOVED TO REDUX
 const getInitials = (name) => name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '??';
@@ -75,7 +75,7 @@ const AssignModal = ({ assignment, onClose, onAssign, onUnassign, reviewers }) =
 const AdminAssignments = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const allAssignments = useSelector((s) => s.assignments.items);
+  const allAssignments = useSelector((s) => s.proposals.items);
   const reviewersList = useSelector((s) => s.reviewers.items);
 
   const [activeTab, setActiveTab] = useState('Assigned');

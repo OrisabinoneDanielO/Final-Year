@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchComments } from '../../features/comments/commentsSlice';
 
 const DUMMY_REVIEWER_COMMENT_REJECTED =
   'The proposal is not feasible as I feel that the project poses risk without any guarantee of significant findings';
@@ -8,8 +9,13 @@ const DUMMY_REVIEWER_COMMENT_REJECTED =
 const ProposalDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const assignments = useSelector((s) => s.assignments.items);
-  const comments = useSelector((s) => s.assignments.comments);
+  const dispatch = useDispatch();
+  const assignments = useSelector((s) => s.proposals.items);
+  const comments = useSelector((s) => s.comments.items);
+
+  useEffect(() => {
+    if (id) dispatch(fetchComments(id));
+  }, [dispatch, id]);
 
   const item = assignments.find((a) => String(a.id) === String(id));
 

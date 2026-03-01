@@ -6,8 +6,8 @@ import { selectUser } from '../../features/auth/authSlice';
 import {
   markNotificationRead,
   markAllNotificationsRead,
-  markResearcherNotificationRead,
-} from '../../features/assignments/assignmentsSlice';
+  selectNotifications,
+} from '../../features/notifications/notificationsSlice';
 
 // ── Icon per notification type ────────────────────────────────────────────────
 const TYPE_ICON = {
@@ -214,7 +214,7 @@ const ResearcherNotifications = ({ notifications, unreadCount, navigate, dispatc
                 : <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Seen</span>}
               {!n.read && (
                 <button
-                  onClick={() => dispatch(markResearcherNotificationRead(n.id))}
+                  onClick={() => dispatch(markNotificationRead(n.id))}
                   className="w-full sm:w-auto text-[10px] font-black uppercase tracking-widest text-gray-600 bg-white px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-50 transition-all shadow-sm active:scale-95"
                 >
                   Mark read
@@ -233,10 +233,10 @@ const Notifications = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  const notifications = useSelector((s) => s.assignments.notifications ?? []);
-  const researcherNotifications = useSelector((s) => s.assignments.researcherNotifications ?? []);
-  const unreadCount = (notifications).filter((n) => !n.read).length;
-  const researcherUnreadCount = (researcherNotifications).filter((n) => !n.read).length;
+  const notifications = useSelector(selectNotifications);
+  const researcherNotifications = useSelector(selectNotifications);
+  const unreadCount = notifications.filter((n) => !n.read).length;
+  const researcherUnreadCount = researcherNotifications.filter((n) => !n.read).length;
 
   if (user?.role === 'admin') {
     return <AdminNotifications notifications={notifications} navigate={navigate} dispatch={dispatch} />;

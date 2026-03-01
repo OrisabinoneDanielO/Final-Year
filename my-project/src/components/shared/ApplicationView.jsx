@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 const ApplicationView = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const assignments = useSelector(s => s.assignments.items)
+  const assignments = useSelector(s => s.proposals.items)
   const assignment = assignments.find(a => String(a.id) === String(id));
   const applicationId = assignment?.applicationCode || `BUH-${id}`;
 

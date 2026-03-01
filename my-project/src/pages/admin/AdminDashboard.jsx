@@ -13,7 +13,7 @@ const FILTER_DAYS_MAP = {
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const user = useSelector(selectUser);
-  const assignments = useSelector((s) => s.assignments.items);
+  const assignments = useSelector((s) => s.proposals.items);
   const [activeFilter, setActiveFilter] = React.useState('This Week');
 
   const filterOptions = ['This Week', 'This Month', 'Last 3 Months', 'Last 6 Months'];

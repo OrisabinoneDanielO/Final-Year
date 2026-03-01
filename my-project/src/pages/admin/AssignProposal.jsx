@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronDown, Check } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { assignReviewer } from '../../features/assignments/assignmentsSlice';
+import { assignReviewer } from '../../features/proposals/proposalsSlice';
 
 const CATEGORIES = [
     'Public Health, Nursing, G...',
@@ -61,7 +61,7 @@ const AssignProposal = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
 
-    const assignments = useSelector(s => s.assignments.items);
+    const assignments = useSelector(s => s.proposals.items);
     const reviewersList = useSelector(s => s.reviewers.items);
     const assignment = assignments.find(a => String(a.id) === String(id));
 

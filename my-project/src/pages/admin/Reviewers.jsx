@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { X, MoreVertical } from 'lucide-react';
 import { removeReviewer } from '../../features/reviewers/reviewersSlice';
-import { unassignAllFromReviewer } from '../../features/assignments/assignmentsSlice';
 
 const FILTER_OPTIONS = ['Title', 'Years in Practice', 'Specialization', 'Institution'];
 
@@ -173,7 +172,6 @@ const ReviewerModal = ({ reviewer, onClose }) => {
               </button>
               <button
                 onClick={() => {
-                  dispatch(unassignAllFromReviewer(Number(reviewer.id)));
                   dispatch(removeReviewer(Number(reviewer.id)));
                   setShowDeactivateConfirm(false);
                   onClose();

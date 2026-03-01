@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 const Responses = () => {
   const navigate = useNavigate();
-  const assignments = useSelector(s => s.assignments.items);
+  const assignments = useSelector(s => s.proposals.items);
 
   // Show assignments that have researcher changes
   const responsesData = assignments

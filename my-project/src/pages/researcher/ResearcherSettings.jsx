@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, login, updateRegisteredResearcher } from '../../features/auth/authSlice';
+import { selectUser, setUser, updateProfile, changePassword } from '../../features/auth/authSlice';
 import { ArrowLeft, Save, Camera, Eye, EyeOff } from 'lucide-react';
 
 const INPUT_CLS =
@@ -15,18 +15,14 @@ const ResearcherSettings = () => {
   const user = useSelector(selectUser);
   const fileRef = useRef(null);
 
-  const researcher = useSelector((s) =>
-    s.auth.registeredResearchers.find((r) => r.email.toLowerCase() === user?.email?.toLowerCase())
-  );
-
   const [form, setForm] = useState({
-    name: researcher?.name || user?.name || '',
-    institution: researcher?.institution || '',
-    occupation: researcher?.occupation || '',
-    phone: researcher?.phone || '',
-    department: researcher?.department || '',
+    name: user?.name || '',
+    institution: user?.institution || '',
+    occupation: user?.occupation || '',
+    phone: user?.phone || '',
+    department: user?.department || '',
   });
-  const [photoPreview, setPhotoPreview] = useState(researcher?.photo || user?.photo || null);
+  const [photoPreview, setPhotoPreview] = useState(user?.photo || null);
   const [saved, setSaved] = useState(false);
 
   // Password change state
@@ -63,17 +59,20 @@ const ResearcherSettings = () => {
   // ── Save profile handler ────────────────────────────────────────────────
   const handleSave = () => {
     const updates = {
-      email: user.email,
       name: form.name.trim() || user.name,
       institution: form.institution.trim(),
       occupation: form.occupation.trim(),
       phone: form.phone.trim(),
       department: form.department.trim(),
-      photo: photoPreview || researcher?.photo || null,
+      photo: photoPreview || user?.photo || null,
     };
-    dispatch(updateRegisteredResearcher(updates));
-    dispatch(login({ ...user, name: form.name.trim() || user.name, photo: photoPreview || user.photo }));
-    setSaved(true);
+    dispatch(updateProfile(updates))
+      .unwrap()
+      .then((updatedUser) => {
+        dispatch(setUser({ ...user, ...updatedUser }));
+        setSaved(true);
+      })
+      .catch(() => {});
   };
 
   // ── Change password handler ─────────────────────────────────────────────
@@ -84,10 +83,6 @@ const ResearcherSettings = () => {
       setPwError('Please fill in all password fields');
       return;
     }
-    if (!researcher || pw.current !== researcher.password) {
-      setPwError('Current password is incorrect');
-      return;
-    }
     if (pw.newPw.length < MIN_PASSWORD_LEN) {
       setPwError(`New password must be at least ${MIN_PASSWORD_LEN} characters`);
       return;
@@ -96,9 +91,15 @@ const ResearcherSettings = () => {
       setPwError('New passwords do not match');
       return;
     }
-    dispatch(updateRegisteredResearcher({ email: user.email, password: pw.newPw }));
-    setPw({ current: '', newPw: '', confirm: '' });
-    setPwSuccess(true);
+    dispatch(changePassword({ currentPassword: pw.current, newPassword: pw.newPw }))
+      .unwrap()
+      .then(() => {
+        setPw({ current: '', newPw: '', confirm: '' });
+        setPwSuccess(true);
+      })
+      .catch((err) => {
+        setPwError(err || 'Password change failed');
+      });
   };
 
   return (

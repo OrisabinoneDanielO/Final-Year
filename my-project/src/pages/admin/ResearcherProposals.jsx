@@ -24,7 +24,7 @@ const ResearcherProposals = () => {
     const researcherName = researcher ? researcher.name : 'Researcher';
 
     // Get all assignments from Redux (simulating researcher's proposals)
-    const allAssignments = useSelector(s => s.assignments.items);
+    const allAssignments = useSelector(s => s.proposals.items);
     const reviewers = useSelector(s => s.reviewers.items);
 
     // Filter assignments based on the active tab status AND researcher ID

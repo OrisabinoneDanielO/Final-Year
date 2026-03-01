@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, registerResearcher } from './authSlice';
+import { loginUser, registerUser, selectAuthStatus, selectAuthError, clearAuthError } from './authSlice';
 
 const ROLE_SETTINGS = {
   reviewer: { title: 'Reviewer Login', color: '#003B95' },
@@ -37,13 +37,15 @@ const ResearcherSignUp = ({ onBack }) => {
       return;
     }
     setIsLoading(true);
-    setTimeout(() => {
-      // Save researcher credentials so they can log in later
-      dispatch(registerResearcher({ email: form.email, password: form.password, name: form.name }));
-      dispatch(login({ email: form.email, name: form.name, role: 'researcher' }));
-      setIsLoading(false);
-      navigate('/dashboard');
-    }, 1200);
+    dispatch(registerUser({ ...form, role: 'researcher' }))
+      .unwrap()
+      .then(() => {
+        setIsLoading(false);
+        navigate('/dashboard');
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -147,9 +149,8 @@ const UnifiedLoginPage = () => {
   const dispatch = useDispatch();
   const { role } = useParams();
   const currentRole = role && ROLE_SETTINGS[role] ? role : 'reviewer';
-  const reviewers = useSelector((s) => s.reviewers.items);
-  const adminCredentials = useSelector((s) => s.auth.adminCredentials);
-  const registeredResearchers = useSelector((s) => s.auth.registeredResearchers);
+  const authStatus = useSelector(selectAuthStatus);
+  const authError = useSelector(selectAuthError);
 
   const [showSignUp, setShowSignUp] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -183,77 +184,16 @@ const UnifiedLoginPage = () => {
       return;
     }
 
-    const emailLower = formData.email.toLowerCase();
-    const enteredPassword = formData.password;
-
-    // ── Admin login ──
-    if (currentRole === 'admin') {
-      const adminMatch = adminCredentials.find(
-        (a) => a.email.toLowerCase() === emailLower && a.password === enteredPassword
-      );
-      if (!adminMatch) {
-        setError('Invalid admin email or password');
-        return;
-      }
-    }
-
-    // ── Reviewer login ──
-    if (currentRole === 'reviewer') {
-      const reviewerMatch = reviewers.find(
-        (r) => r.email.toLowerCase() === emailLower
-      );
-      if (!reviewerMatch) {
-        setError('This email is not registered as a reviewer. Contact admin for access.');
-        return;
-      }
-      if (reviewerMatch.password !== enteredPassword) {
-        setError('Incorrect password');
-        return;
-      }
-      if (reviewerMatch.active === false) {
-        setError('This account has been deactivated. Contact admin.');
-        return;
-      }
-    }
-
-    // ── Researcher login ──
-    if (currentRole === 'researcher') {
-      const researcherMatch = registeredResearchers.find(
-        (r) => r.email.toLowerCase() === emailLower
-      );
-      if (!researcherMatch) {
-        setError('No account found. Please sign up first.');
-        return;
-      }
-      if (researcherMatch.password !== enteredPassword) {
-        setError('Incorrect password');
-        return;
-      }
-    }
-
     setIsLoading(true);
-    setTimeout(() => {
-      const user = { email: formData.email, role: currentRole };
-      if (currentRole === 'admin') user.name = 'Admin';
-      if (currentRole === 'reviewer') {
-        const r = reviewers.find((rv) => rv.email.toLowerCase() === emailLower);
-        if (r) {
-          user.name = r.name;
-          if (r.avatar) user.photo = r.avatar;
-        }
-      }
-      if (currentRole === 'researcher') {
-        const r = registeredResearchers.find((rv) => rv.email.toLowerCase() === emailLower);
-        if (r) {
-          user.name = r.name;
-          user.isVerified = !!r.isVerified;
-          if (r.photo) user.photo = r.photo;
-        }
-      }
-      dispatch(login(user));
-      setIsLoading(false);
+    setError('');
+    try {
+      await dispatch(loginUser({ email: formData.email, password: formData.password, role: currentRole })).unwrap();
       navigate('/dashboard');
-    }, 1200);
+    } catch (err) {
+      setError(err || 'Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const settings = ROLE_SETTINGS[currentRole];

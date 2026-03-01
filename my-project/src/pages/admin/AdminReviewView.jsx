@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Search, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { unassignReviewer } from '../../features/assignments/assignmentsSlice';
+import { unassignReviewer } from '../../features/proposals/proposalsSlice';
+import { fetchComments } from '../../features/comments/commentsSlice';
 
 // Reviewer logic - MOVED TO REDUX
 const getInitials = (name) => name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '??';
@@ -119,9 +120,13 @@ const AdminReviewView = () => {
   const [versionsModalOpen, setVersionsModalOpen] = useState(false);
   const [showUnassignConfirm, setShowUnassignConfirm] = useState(false);
 
-  const assignments = useSelector((s) => s.assignments.items);
+  const assignments = useSelector((s) => s.proposals.items);
   const reviewersList = useSelector((s) => s.reviewers.items);
-  const allComments = useSelector((s) => s.assignments.comments);
+  const allComments = useSelector((s) => s.comments.items);
+
+  useEffect(() => {
+    if (id) dispatch(fetchComments(id));
+  }, [dispatch, id]);
 
   const assignment = assignments.find((a) => String(a.id) === String(id));
   const reduxComments = allComments.filter((c) => String(c.assignmentId) === String(id));

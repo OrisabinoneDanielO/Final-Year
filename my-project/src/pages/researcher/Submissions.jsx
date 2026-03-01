@@ -36,7 +36,7 @@ const getButtonStyle = (item) => {
 
 const Submissions = () => {
   const navigate = useNavigate();
-  const allItems = useSelector((s) => s.assignments.items);
+  const allItems = useSelector((s) => s.proposals.items);
   const reviewersList = useSelector((s) => s.reviewers.items);
 
   const [activeTab, setActiveTab] = useState('Drafts');

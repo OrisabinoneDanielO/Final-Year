@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectUser, verifyEmail } from '../../features/auth/authSlice';
+import { selectUser, sendOtp, verifyOtp } from '../../features/auth/authSlice';
 import { Bell, X, CheckCircle } from 'lucide-react';
-
-// ── OTP helpers ───────────────────────────────────────────────────────────────
-/**
- * In production: replace generateOtp() with a real API call
- * e.g. POST /api/auth/send-otp  → server generates + emails the OTP.
- * The component stores the returned OTP in state only for demo purposes.
- */
-const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 
 // ── Component ─────────────────────────────────────────────────────────────────
 const ResearcherDashboard = () => {
@@ -18,12 +10,11 @@ const ResearcherDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const researcherUnreadCount = useSelector(
-    (s) => (s.assignments.researcherNotifications ?? []).filter((n) => !n.read).length
+    (s) => (s.notifications.items ?? []).filter((n) => !n.read).length
   );
 
   // OTP modal state
   const [otpModalOpen, setOtpModalOpen] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState('');   // store for demo verification
   const [enteredOtp, setEnteredOtp] = useState(['', '', '', '', '', '']);
   const [otpError, setOtpError] = useState('');
   const [_otpSent, setOtpSent] = useState(false);
@@ -33,10 +24,7 @@ const ResearcherDashboard = () => {
   const inputRefs = Array.from({ length: 6 }, () => React.createRef());
 
   const handleSendOtp = () => {
-    // TODO (backend): POST /api/auth/send-otp  { email: user.email }
-    const otp = generateOtp();
-    setGeneratedOtp(otp);
-    // OTP is stored in state for demo verification only
+    dispatch(sendOtp({ email: user.email }));
     setOtpSent(true);
     setOtpModalOpen(true);
     setEnteredOtp(['', '', '', '', '', '']);
@@ -62,18 +50,19 @@ const ResearcherDashboard = () => {
     const entered = enteredOtp.join('');
     if (entered.length < 6) { setOtpError('Please enter all 6 digits.'); return; }
 
-    // TODO (backend): POST /api/auth/verify-otp  { email, otp: entered }
-    if (entered === generatedOtp) {
-      dispatch(verifyEmail());
-      setOtpModalOpen(false);
-      setSuccessModal(true);
-    } else {
-      setOtpError('Incorrect OTP. Please try again.');
-    }
+    dispatch(verifyOtp({ email: user.email, otp: entered }))
+      .unwrap()
+      .then(() => {
+        setOtpModalOpen(false);
+        setSuccessModal(true);
+      })
+      .catch(() => {
+        setOtpError('Incorrect OTP. Please try again.');
+      });
   };
 
   // ── Derived stats from Redux ───────────────────────────────────────────────
-  const allAssignments = useSelector((s) => s.assignments.items);
+  const allAssignments = useSelector((s) => s.proposals.items);
   const completedCount = allAssignments.filter((a) => a.status === 'Completed').length;
   const draftCount = allAssignments.filter((a) => a.status === 'Unaccepted').length;
   const ongoingAssignments = allAssignments.filter((a) => a.status === 'Ongoing' || a.status === 'Not Reviewed');

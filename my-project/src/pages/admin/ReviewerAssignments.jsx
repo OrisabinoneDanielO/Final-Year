@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, UserMinus } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { unassignReviewer } from '../../features/assignments/assignmentsSlice';
+import { unassignReviewer } from '../../features/proposals/proposalsSlice';
 
 const STATUS_TABS = ['Not Reviewed', 'Ongoing', 'Completed'];
 
@@ -18,7 +18,7 @@ const ReviewerAssignments = () => {
   const reviewer = reviewers.find(r => r.id === reviewerId);
 
   // Filter by this reviewer AND the active status tab
-  const allAssignments = useSelector(s => s.assignments.items);
+  const allAssignments = useSelector(s => s.proposals.items);
   const filteredAssignments = allAssignments.filter(
     a => a.reviewerId === reviewerId && a.status === activeTab
   );

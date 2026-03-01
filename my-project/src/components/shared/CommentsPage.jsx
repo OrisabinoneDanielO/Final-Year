@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trash2, Edit, Check, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { editComment, deleteComment } from '../../features/assignments/assignmentsSlice';
+import { editComment, deleteComment, fetchComments, selectComments } from '../../features/comments/commentsSlice';
+import { selectProposals } from '../../features/proposals/proposalsSlice';
 
 const CommentsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const assignmentId = Number(id);
   const dispatch = useDispatch();
-  const comments = useSelector((s) => s.assignments.comments);
-  const assignments = useSelector((s) => s.assignments.items);
+  const comments = useSelector(selectComments);
+  const assignments = useSelector(selectProposals);
   const assignment = assignments.find((a) => a.id === assignmentId);
+
+  useEffect(() => {
+    if (id) dispatch(fetchComments(id));
+  }, [dispatch, id]);
   const currentUser = useSelector((s) => s.auth.user);
 
   const myComments = comments.filter((c) => Number(c.assignmentId) === assignmentId);

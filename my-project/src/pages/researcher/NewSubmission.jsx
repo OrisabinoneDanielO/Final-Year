@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, X } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectUser } from '../../features/auth/authSlice';
-import { saveDraft } from '../../features/assignments/assignmentsSlice';
+import { createProposal } from '../../features/proposals/proposalsSlice';
 
 const CATEGORIES = ['UG', 'PG', 'Independent/Masters', 'PhD', 'International'];
 
@@ -50,7 +50,7 @@ const NewSubmission = () => {
     const dispatch = useDispatch();
     const user = useSelector(selectUser);
     const [searchParams] = useSearchParams();
-    const allItems = useSelector((s) => s.assignments.items);
+    const allItems = useSelector((s) => s.proposals.items);
 
     // Restore from draft if ?draft=<id> is present
     const draftId = searchParams.get('draft') ? Number(searchParams.get('draft')) : null;
@@ -99,7 +99,7 @@ const NewSubmission = () => {
 
     const handleSaveDraft = () => {
         dispatch(
-            saveDraft({
+            createProposal({
                 id: draftId ?? undefined,
                 title: projectName.trim() || 'Untitled Draft',
                 researcherNames,
@@ -121,7 +121,7 @@ const NewSubmission = () => {
         // Save form data to Redux before navigating so it isn't lost
         const savedId = draftId ?? Date.now();
         dispatch(
-            saveDraft({
+            createProposal({
                 id: savedId,
                 title: projectName.trim() || 'Untitled Draft',
                 researcherNames,

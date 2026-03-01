@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectUser, login } from '../../features/auth/authSlice';
+import { selectUser, setUser, changePassword } from '../../features/auth/authSlice';
 import { updateReviewer } from '../../features/reviewers/reviewersSlice';
 import { ArrowLeft, Save, Camera, Eye, EyeOff } from 'lucide-react';
 
@@ -79,7 +79,7 @@ const ReviewerSettings = () => {
       yearsOfExperience: parseInt(form.yearsOfExperience) || reviewer.yearsOfExperience,
       avatar: avatarPreview || reviewer.avatar,
     }));
-    dispatch(login({ ...user, name: form.name.trim() || user.name, photo: avatarPreview || user.photo }));
+    dispatch(setUser({ ...user, name: form.name.trim() || user.name, photo: avatarPreview || user.photo }));
     setSaved(true);
   };
 
@@ -91,10 +91,6 @@ const ReviewerSettings = () => {
       setPwError('Please fill in all password fields');
       return;
     }
-    if (pw.current !== reviewer.password) {
-      setPwError('Current password is incorrect');
-      return;
-    }
     if (pw.newPw.length < MIN_PASSWORD_LEN) {
       setPwError(`New password must be at least ${MIN_PASSWORD_LEN} characters`);
       return;
@@ -103,9 +99,15 @@ const ReviewerSettings = () => {
       setPwError('New passwords do not match');
       return;
     }
-    dispatch(updateReviewer({ id: reviewer.id, password: pw.newPw }));
-    setPw({ current: '', newPw: '', confirm: '' });
-    setPwSuccess(true);
+    dispatch(changePassword({ currentPassword: pw.current, newPassword: pw.newPw }))
+      .unwrap()
+      .then(() => {
+        setPw({ current: '', newPw: '', confirm: '' });
+        setPwSuccess(true);
+      })
+      .catch((err) => {
+        setPwError(err || 'Password change failed');
+      });
   };
 
   return (

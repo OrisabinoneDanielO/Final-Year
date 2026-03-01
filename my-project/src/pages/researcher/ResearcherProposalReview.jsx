@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchComments } from '../../features/comments/commentsSlice';
 import { ArrowLeft } from 'lucide-react';
 
 const SECTIONS = ['Information', 'Chapter 1', 'Chapter 2', 'Chapter 3', 'References', 'Appendices'];
@@ -16,10 +17,15 @@ const DUMMY_REVIEWER = {
 const ResearcherProposalReview = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const assignments = useSelector((s) => s.assignments.items);
-    const allComments = useSelector((s) => s.assignments.comments);
+    const dispatch = useDispatch();
+    const assignments = useSelector((s) => s.proposals.items);
+    const allComments = useSelector((s) => s.comments.items);
     const reviewersList = useSelector((s) => s.reviewers.items);
     const item = assignments.find((a) => String(a.id) === String(id));
+
+    useEffect(() => {
+        if (id) dispatch(fetchComments(id));
+    }, [dispatch, id]);
 
     // Resolve the actual reviewer from Redux instead of using a hardcoded dummy
     const reviewer = reviewersList.find((r) => r.id === item?.reviewerId);

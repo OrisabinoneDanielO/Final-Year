@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateReviewer, removeReviewer } from '../../features/reviewers/reviewersSlice';
-import { unassignAllFromReviewer } from '../../features/assignments/assignmentsSlice';
 import { ArrowLeft, MoreVertical, Mail, Phone, Building2, Award, Clock } from 'lucide-react';
 
 const ReviewerProfile = () => {
@@ -157,7 +156,6 @@ const ReviewerProfile = () => {
               </button>
               <button
                 onClick={() => {
-                  dispatch(unassignAllFromReviewer(Number(id)));
                   dispatch(removeReviewer(Number(id)));
                   setShowDeactivateModal(false);
                   navigate('/dashboard/reviewers');

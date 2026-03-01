@@ -5,12 +5,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { SlidersHorizontal, Search } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux'
-import { acceptFromDashboard, declineFromDashboard, beginReview } from '../../features/assignments/assignmentsSlice'
+import { acceptAssignment, declineAssignment, beginReview } from '../../features/reviews/reviewsSlice'
+import { selectProposals } from '../../features/proposals/proposalsSlice'
 
 const Assignments = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
-  const reduxAssignments = useSelector(s => s.assignments.items)
+  const reduxAssignments = useSelector(selectProposals)
 
   // --- Modal State ---
   const [modalState, setModalState] = useState({
@@ -41,7 +42,7 @@ const Assignments = () => {
   // Logic to handle actual confirmation
   const handleConfirmAction = () => {
     if (modalState.type === 'decline') {
-      dispatch(declineFromDashboard(modalState.id))
+      dispatch(declineAssignment(modalState.id))
     }
     setModalState({ ...modalState, isOpen: false });
   };
@@ -150,7 +151,7 @@ const Assignments = () => {
                   <>
                     <button
                       className="w-full sm:w-auto bg-[#EAB308] text-white px-10 py-3.5 rounded-full font-black text-[11px] uppercase tracking-widest shadow-md hover:bg-yellow-600 transition-all active:scale-95"
-                      onClick={() => dispatch(acceptFromDashboard(item.id))}
+                      onClick={() => dispatch(acceptAssignment(item.id))}
                     >
                       Accept
                     </button>

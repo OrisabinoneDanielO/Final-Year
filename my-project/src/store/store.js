@@ -1,73 +1,37 @@
 import { configureStore } from '@reduxjs/toolkit';
-import assignmentsReducer from '../features/assignments/assignmentsSlice';
 import authReducer from '../features/auth/authSlice';
+import proposalsReducer from '../features/proposals/proposalsSlice';
 import reviewersReducer from '../features/reviewers/reviewersSlice';
+import reviewsReducer from '../features/reviews/reviewsSlice';
+import commentsReducer from '../features/comments/commentsSlice';
+import notificationsReducer from '../features/notifications/notificationsSlice';
+import paymentsReducer from '../features/payments/paymentsSlice';
+import researchersReducer from '../features/researchers/researchersSlice';
 import { saveUser, clearUser } from '../features/auth/authStorage';
-
-// ── localStorage helpers for full-state persistence ──────────────────────────
-const ASSIGNMENTS_KEY = 'buhrec_assignments';
-const REVIEWERS_KEY = 'buhrec_reviewers';
-
-const loadState = (key) => {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : undefined;
-  } catch {
-    return undefined;
-  }
-};
-const persistState = (key, state) => {
-  try { localStorage.setItem(key, JSON.stringify(state)); } catch { /* ignore */ }
-};
-
-const persistedAssignments = loadState(ASSIGNMENTS_KEY);
-const persistedReviewers = loadState(REVIEWERS_KEY);
 
 const store = configureStore({
   reducer: {
-    assignments: assignmentsReducer,
     auth: authReducer,
+    proposals: proposalsReducer,
     reviewers: reviewersReducer,
-  },
-  preloadedState: {
-    ...(persistedAssignments && { assignments: persistedAssignments }),
-    ...(persistedReviewers && { reviewers: persistedReviewers }),
+    reviews: reviewsReducer,
+    comments: commentsReducer,
+    notifications: notificationsReducer,
+    payments: paymentsReducer,
+    researchers: researchersReducer,
   },
 });
 
-// Sync auth.user to localStorage in one place
+// Sync auth.user to localStorage for page refresh persistence
 let currentUser = store.getState().auth.user;
-let prevAssignments = store.getState().assignments;
-let prevReviewers = store.getState().reviewers;
-let prevResearcherAuth = store.getState().auth.registeredResearchers;
 
 store.subscribe(() => {
   const state = store.getState();
 
-  // Auth persistence (existing)
   const nextUser = state.auth.user;
   if (nextUser !== currentUser) {
     currentUser = nextUser;
     if (nextUser) { saveUser(nextUser); } else { clearUser(); }
-  }
-
-  // Assignments persistence
-  if (state.assignments !== prevAssignments) {
-    prevAssignments = state.assignments;
-    persistState(ASSIGNMENTS_KEY, state.assignments);
-  }
-
-  // Reviewers persistence
-  if (state.reviewers !== prevReviewers) {
-    prevReviewers = state.reviewers;
-    persistState(REVIEWERS_KEY, state.reviewers);
-  }
-
-  // Researcher auth persistence
-  const nextResearchers = state.auth.registeredResearchers;
-  if (nextResearchers !== prevResearcherAuth) {
-    prevResearcherAuth = nextResearchers;
-    persistState('buhrec_researchers_auth', nextResearchers);
   }
 });
 
