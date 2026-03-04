@@ -1,0 +1,21 @@
+[
+  {
+    "file": "C:\\Users\\HP USER\\OneDrive\\Desktop\\CODE\\Final Year\\buhrec-frontend\\src\\components\\shared\\CommentsPage.jsx",
+    "messages": [
+      "'useState' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. at line 1",
+      "'currentUser' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. at line 20"
+    ]
+  },
+  {
+    "file": "C:\\Users\\HP USER\\OneDrive\\Desktop\\CODE\\Final Year\\buhrec-frontend\\src\\features\\auth\\UnifiedLoginPage.jsx",
+    "messages": [
+      "'useSelector' is defined but never used. Allowed unused vars must match /^[A-Z_]/u. at line 3"
+    ]
+  },
+  {
+    "file": "C:\\Users\\HP USER\\OneDrive\\Desktop\\CODE\\Final Year\\buhrec-frontend\\src\\pages\\admin\\Reviewers.jsx",
+    "messages": [
+      "'setSearchQuery' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u. at line 199"
+    ]
+  }
+]
